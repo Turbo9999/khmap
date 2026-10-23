@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildWorld, V } from './world.js';
 import { buildLandmarks } from './landmarks.js';
 import { buildPeople } from './people.js';
+import { buildTransit } from './transit.js';
 import { loadPolicies, REGION_KEYS } from './data.js';
 
 const $ = id => document.getElementById(id);
@@ -40,6 +41,8 @@ const moon = new THREE.PointLight(0xffd9a0, 0, 30); scene.add(moon);
 const world = buildWorld(scene);
 const lm = buildLandmarks(scene, world);
 world.clearAround(lm.items.map(it => ({ x: it.x, z: it.z, r: .9 })));
+const transit = buildTransit(scene, world);
+lm.items.push(...transit.items);
 const center = (() => { const b = world.bounds; return new THREE.Vector3((b.minX + b.maxX) / 2 - 4, 0, (b.minZ + b.maxZ) / 2 + 6); })();
 
 /* ---------- 資料 ---------- */
@@ -214,7 +217,7 @@ $('bNight').onclick = () => {
   night = !night; $('bNight').classList.toggle('on', night); $('bNight').setAttribute('aria-pressed', night); $('bNight').textContent = night ? '白天' : '夜晚';
   const S = night ? NIGHT : DAY;
   scene.background.set(S.sky); scene.fog.color.set(S.fog); hemi.intensity = S.hemi; sun.intensity = S.sun;
-  world.setNight(night); lm.setNight(night);
+  world.setNight(night); lm.setNight(night); transit.setNight(night);
 };
 // 搜尋
 const q = $('q'), sugg = $('sugg');
@@ -381,7 +384,8 @@ function tick() {
   sun.position.copy(controls.target).add(new THREE.Vector3(-r * .6, r * 1.3, r * .8)); sun.target.position.copy(controls.target);
   Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: .1, far: r * 4 }); sun.shadow.camera.updateProjectionMatrix();
   world.update(dt, t); lm.applyLift(world.liftOf);
-  if (!reduce) lm.update(t);
+  if (!reduce) { lm.update(t); transit.update(dt); }
+  transit.applyLift();
   people && people.update(dt, t, reduce);
   renderer.render(scene, camera);
   // 區名標籤
