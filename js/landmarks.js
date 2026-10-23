@@ -201,7 +201,7 @@ export function buildLandmarks(scene, world) {
   const lastLift = new Float32Array(64);
   function applyLift(liftOf) {
     let dirty = false;
-    for (const it of items) { const l = liftOf(it.di); if (l !== lastLift[it.di]) { it.root.position.y = it.y + l; } }
+    for (const it of items) { if (!it.root) continue; const l = liftOf(it.di); if (l !== lastLift[it.di]) { it.root.position.y = it.y + l; } }
     boxes.forEach((q, n) => { const l = liftOf(q.item.di); if (l === lastLift[q.item.di]) return; mesh.getMatrixAt(n, m4); m4.elements[13] = q.item.y + (q.y + q.h / 2) * U + l; mesh.setMatrixAt(n, m4); dirty = true; });
     glows.forEach((q, n) => { const l = liftOf(q.item.di); if (l === lastLift[q.item.di]) return; gm.getMatrixAt(n, m4); m4.elements[13] = q.item.y + (q.y + q.h / 2) * U + l; gm.setMatrixAt(n, m4); dirty = true; });
     for (const it of items) lastLift[it.di] = liftOf(it.di);
