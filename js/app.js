@@ -24,7 +24,10 @@ scene.fog = new THREE.Fog(DAY.fog, 160, 420);
 const camera = new THREE.PerspectiveCamera(36, 1, .05, 1200);
 const controls = new OrbitControls(camera, renderer.domElement);
 Object.assign(controls, { enableDamping: true, dampingFactor: .08, maxPolarAngle: Math.PI * .45, minDistance: 1.2, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 1.2 });
-controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+// 像地圖一樣：單指／左鍵拖曳＝平移；雙指＝縮放與旋轉；右鍵／Ctrl＋拖曳＝旋轉
+controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
+controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
+controls.panSpeed = 1.1;
 
 const hemi = new THREE.HemisphereLight(0xffffff, 0x6b7f6b, DAY.hemi); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff1dc, DAY.sun);
@@ -79,7 +82,10 @@ function flyTo(target, dist, dur = 1000) {
 function fitDist() { const b = world.bounds, span = Math.max(b.maxZ - b.minZ, (b.maxX - b.minX) / Math.max(camera.aspect, .55)); return span * (camera.aspect < 1 ? 1.45 : 1.15); }
 function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
 addEventListener('resize', () => { resize(); setSheet && sheet && setSheet(sheet.dataset.state || 'closed'); }); resize();
-controls.target.copy(center); camera.position.copy(center.clone().add(VIEW.clone().multiplyScalar(fitDist())));
+// 開場先看市區（85 大樓、駁二一帶），山區在後方
+const START = new THREE.Vector3(-22, 0, 16);
+const startDist = () => fitDist() * (camera.aspect < 1 ? .42 : .5);
+controls.target.copy(START); camera.position.copy(START.clone().add(VIEW.clone().multiplyScalar(startDist())));
 
 /* ---------- 面板 ---------- */
 const sheet = $('sheet'), shTitle = $('shTitle'), shSub = $('shSub'), shBody = $('shBody'), filtersEl = $('filters');
@@ -87,8 +93,21 @@ const desktop = () => innerWidth >= 900;
 function setSheet(state) {
   sheet.dataset.state = state;
   sheet.classList.toggle('closed', state === 'closed');
-  if (desktop()) { sheet.style.transform = ''; return; }
+  if (desktop()) { sheet.style.transform = ''; applyOffset(); return; }
   sheet.style.transform = state === 'closed' ? 'translateY(100%)' : state === 'half' ? 'translateY(42%)' : 'translateY(0)';
+  applyOffset();
+}
+// 面板蓋住畫面時，把地圖的焦點往可見區域移（手機往上、桌機往左）
+let offTarget = { x: 0, y: 0 }, off = { x: 0, y: 0 };
+function applyOffset() {
+  const st = sheet.dataset.state;
+  if (desktop()) offTarget = { x: st && st !== 'closed' ? 220 : 0, y: 0 };
+  else offTarget = { x: 0, y: st === 'half' ? innerHeight * .26 : st === 'full' ? innerHeight * .34 : 0 };
+}
+function stepOffset(dt) {
+  const k = Math.min(1, dt * 6); off.x += (offTarget.x - off.x) * k; off.y += (offTarget.y - off.y) * k;
+  if (Math.abs(off.x) < .5 && Math.abs(off.y) < .5 && !offTarget.x && !offTarget.y) { if (camera.view && camera.view.enabled) { camera.clearViewOffset(); } return; }
+  camera.setViewOffset(innerWidth, innerHeight, off.x, off.y, innerWidth, innerHeight);
 }
 setSheet('closed');
 $('shX').onclick = () => { setSheet('closed'); clearSelect(); };
@@ -245,6 +264,7 @@ const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 function tick() {
   const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
   if (fly) { const k = Math.min(1, (performance.now() - fly.t0) / fly.dur), e = ease(k); controls.target.lerpVectors(fly.fT, fly.tT, e); camera.position.lerpVectors(fly.fP, fly.tP, e); if (k >= 1) fly = null; }
+  stepOffset(dt);
   controls.update();
   // 陰影跟著鏡頭目標走，近看比較銳利
   const dist = camera.position.distanceTo(controls.target);
