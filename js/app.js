@@ -395,10 +395,7 @@ function tick() {
   requestAnimationFrame(tick);
 }
 
-/* ---------- 鎖住頁面，不讓瀏覽器自己縮放或捲動 ---------- */
-for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
-document.addEventListener('touchmove', e => { if (e.touches.length > 1 && !e.target.closest('#stage')) e.preventDefault(); }, { passive: false });
-document.addEventListener('dblclick', e => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
+/* ---------- 手機網址列伸縮時用實際可見高度 ---------- */
 // 手機網址列伸縮時，用實際可見高度
 function setVH() { document.documentElement.style.setProperty('--vh', (window.visualViewport ? visualViewport.height : innerHeight) + 'px'); }
 setVH(); (window.visualViewport || window).addEventListener('resize', setVH);

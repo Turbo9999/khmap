@@ -16,11 +16,9 @@
 
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-/* 鎖定在手機可視範圍：不捲動、不橫移、不回彈 */
-html.map,html.map body{position:fixed;inset:0;width:100%;height:var(--vh,100dvh);overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;touch-action:none}
-html.map .top,html.map .zoom,html.map #sheet,html.map .credit,html.map .lbl,html.map .pin{touch-action:manipulation}
-html.map .sh-body,html.map .filters,html.map .tools,html.map .sugg{touch-action:pan-x pan-y}
-.top{max-width:100%;overflow:hidden}
+/* 介面不超出螢幕寬度 */
+html.map,html.map body{overflow:hidden;overscroll-behavior:none}
+.top{max-width:100%;box-sizing:border-box}
 body{background:var(--sky);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased}
 button{font-family:inherit}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -85,10 +83,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .brand h1{font-size:16px}
   .brand p{display:none}
   .badge{font-size:10px;margin:0 0 0 4px;vertical-align:2px}
-  .tools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;width:100%;padding:2px 0 5px}
-  .tools::-webkit-scrollbar{display:none}
-  .tools .btn{flex:none;font-size:13px;padding:5px 10px;border-width:2px;box-shadow:0 2px 0 var(--ink)}
-  .search input{font-size:16px;padding:6px 9px;border-width:2px;width:min(220px,60vw)}
+  .top{align-items:stretch}
+  .brand{align-self:flex-start;max-width:100%}
+  .tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
+  .tools .btn{min-width:0;font-size:12.5px;padding:6px 2px;border-width:2px;box-shadow:0 2px 0 var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .search{width:100%}
+  .search input{font-size:16px;padding:6px 9px;border-width:2px;width:100%}
   .legend{display:none}
   .zoom{top:auto;bottom:calc(40px + env(safe-area-inset-bottom,0px));transform:none;gap:6px}
   .zoom .btn{width:38px;height:38px;font-size:16px;border-width:2px;box-shadow:0 2px 0 var(--ink)}
