@@ -23,9 +23,9 @@ const scene = new THREE.Scene();
 const DAY = { sky: 0xbfe3f2, fog: 0xcfe9f5, hemi: 1.05, sun: 1.7 }, NIGHT = { sky: 0x0b1626, fog: 0x0b1626, hemi: .28, sun: .25 };
 scene.background = new THREE.Color(DAY.sky);
 scene.fog = new THREE.Fog(DAY.fog, 160, 420);
-const camera = new THREE.PerspectiveCamera(36, 1, .05, 1200);
+const camera = new THREE.PerspectiveCamera(36, 1, .01, 1200);
 const controls = new OrbitControls(camera, renderer.domElement);
-Object.assign(controls, { enableDamping: true, dampingFactor: .12, maxPolarAngle: Math.PI * .45, minDistance: 1.2, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 3.2, zoomToCursor: true });
+Object.assign(controls, { enableDamping: true, dampingFactor: .12, maxPolarAngle: Math.PI * .47, minDistance: .12, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 3.2, zoomToCursor: true });
 // 像地圖一樣：單指／左鍵拖曳＝平移；雙指＝縮放與旋轉；右鍵／Ctrl＋拖曳＝旋轉
 controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
@@ -237,7 +237,7 @@ q.addEventListener('keydown', e => { if (e.key === 'Escape') { sugg.hidden = tru
 
 /* ---------- 點選 ---------- */
 const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down = null;
-renderer.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; sugg.hidden = true; });
+renderer.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; sugg.hidden = true; if (follow) stopFollow(); });
 renderer.domElement.addEventListener('pointerup', e => {
   if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
   ptr.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera);
@@ -249,12 +249,40 @@ renderer.domElement.addEventListener('pointerup', e => {
   if (ht) { const c = world.cells[ht.instanceId]; select(c.d, { move: false }); }
 });
 setTimeout(() => $('hint').style.opacity = 0, 7000);
+// 越近看越斜：遠時俯瞰，近到街道高度時幾乎平視
+const tiltFor = d => { const k = Math.min(1, Math.max(0, (12 - d) / 11)); return .62 + k * k * .6; };
+function tiltDir(d) {
+  const off = camera.position.clone().sub(controls.target); const sp = new THREE.Spherical().setFromVector3(off);
+  sp.phi = tiltFor(d); sp.radius = 1; return new THREE.Vector3().setFromSpherical(sp);
+}
+let lastDist = 0;
+function autoTilt() {
+  const off = camera.position.clone().sub(controls.target); const d = off.length();
+  if (lastDist && Math.abs(d - lastDist) / lastDist > .004) {   // 只有在縮放時才調整角度，不跟旋轉打架
+    const sp = new THREE.Spherical().setFromVector3(off); sp.phi += (tiltFor(d) - sp.phi) * .18;
+    camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(sp));
+  }
+  lastDist = d;
+}
+// 跟著小人走（第三人稱）
+let follow = null;
+function startFollow() {
+  if (!people) return;
+  const t = controls.target; let best = null, bd = 1e9;
+  for (const p of people.people) { const dd = p.g.position.distanceToSquared(t) + (selected >= 0 && p.di !== selected ? 1e4 : 0); if (dd < bd) { bd = dd; best = p; } }
+  if (!best) return;
+  follow = best; best.wait = 0; $('bFollow').classList.add('on'); $('bFollow').textContent = '停止跟隨';
+  talk(people.people.indexOf(best));
+}
+function stopFollow() { follow = null; $('bFollow').classList.remove('on'); $('bFollow').textContent = '跟小人走'; }
+$('bFollow').onclick = () => follow ? stopFollow() : startFollow();
+$('bStreet').onclick = () => { stopFollow(); zoomBy(1.8 / Math.max(1.8, camera.position.distanceTo(controls.target))); };
 // 雙擊／雙點兩下：往那個位置放大一大步
 function zoomBy(factor, at) {
   let target = controls.target.clone();
   if (at) { ptr.set(at[0] / innerWidth * 2 - 1, -(at[1] / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera); const h = ray.intersectObject(world.mesh, false)[0]; if (h) target = h.point.clone(); }
   const dist = Math.min(controls.maxDistance, Math.max(controls.minDistance, camera.position.distanceTo(controls.target) * factor));
-  const dir = camera.position.clone().sub(controls.target).normalize();
+  const dir = tiltDir(dist);
   fly = { t0: performance.now() - (reduce ? 400 : 0), dur: 400, fT: controls.target.clone(), tT: target, fP: camera.position.clone(), tP: target.clone().add(dir.multiplyScalar(dist)) };
 }
 renderer.domElement.addEventListener('dblclick', e => zoomBy(.4, [e.clientX, e.clientY]));
@@ -279,7 +307,16 @@ function tick() {
   const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
   if (fly) { const k = Math.min(1, (performance.now() - fly.t0) / fly.dur), e = ease(k); controls.target.lerpVectors(fly.fT, fly.tT, e); camera.position.lerpVectors(fly.fP, fly.tP, e); if (k >= 1) fly = null; }
   stepOffset(dt);
+  if (follow) {
+    const g = follow.g, back = new THREE.Vector3(Math.sin(g.rotation.y), 0, Math.cos(g.rotation.y));
+    const tgt = g.position.clone().add(new THREE.Vector3(0, .18, 0));
+    controls.target.lerp(tgt, Math.min(1, dt * 5));
+    camera.position.lerp(tgt.clone().add(back.multiplyScalar(-.55)).add(new THREE.Vector3(0, .22, 0)), Math.min(1, dt * 3));
+  }
   controls.update();
+  if (!fly && !follow) autoTilt(); else lastDist = camera.position.distanceTo(controls.target);
+  // 鏡頭不鑽進地面
+  { const gy = world.topAt(camera.position.x, camera.position.z) + .1; if (camera.position.y < gy) camera.position.y = gy; }
   // 陰影跟著鏡頭目標走，近看比較銳利
   const dist = camera.position.distanceTo(controls.target);
   const r = Math.min(90, Math.max(6, dist * .9));
@@ -293,14 +330,14 @@ function tick() {
   for (let di = 0; di < world.D.length; di++) {
     const d = world.D[di], el = dLabels[di];
     v.set(d.cx, d.maxH * V * .6 + world.liftOf(di) + .3, d.cz).project(camera);
-    const show = di === selected || (v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1 && (d.area > dist * dist * .006 || dist < 14));
+    const show = di === selected || (v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1 && (d.area > dist * dist * .006 || (dist < 14 && dist > 2.5) || Math.hypot(d.cx - controls.target.x, d.cz - controls.target.z) < 2.5));
     el.hidden = !show; if (!show) continue;
     el.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; el.style.top = ((1 - v.y) / 2 * innerHeight) + 'px';
   }
   lm.items.forEach((it, n) => {
     const el = pins[n];
     v.set(it.x, it.y + world.liftOf(it.di) + it.top * .05 + .08, it.z).project(camera);
-    const show = v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 && (dist < 16 || (it.di === selected && dist < 40));
+    const show = v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 && ((dist < 16 && Math.hypot(it.x - controls.target.x, it.z - controls.target.z) < dist * 1.2) || (it.di === selected && dist < 40));
     el.hidden = !show; if (!show) return;
     el.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; el.style.top = ((1 - v.y) / 2 * innerHeight) + 'px';
   });
