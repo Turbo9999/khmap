@@ -1,0 +1,892 @@
+[
+ {
+  "districts": [
+   "前鎮區"
+  ],
+  "category": "建設",
+  "title": "205 兵工廠轉型新核心",
+  "body": "原址引進企業總部與智慧商辦，結合亞灣會展、藝文與觀光擴大盛事經濟；導入 AI 與綠建築打造智慧住宅社區，以 TOD 模式發展。",
+  "source_name": "賴瑞隆競選官網｜亞洲新灣區 3.0：大亞灣計畫",
+  "source_url": "https://www.zenolai.tw/policy/vision/1",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 0
+ },
+ {
+  "districts": [
+   "前鎮區"
+  ],
+  "category": "生活",
+  "title": "亞灣森林公園",
+  "body": "205 兵工廠用地保留 15 公頃做成森林公園。",
+  "source_name": "賴瑞隆競選官網｜亞洲新灣區 3.0：大亞灣計畫",
+  "source_url": "https://www.zenolai.tw/policy/vision/1",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 1
+ },
+ {
+  "districts": [
+   "前鎮區",
+   "苓雅區"
+  ],
+  "category": "產業",
+  "title": "AI 與資安金融聚落",
+  "body": "結合台灣碳交易所與亞洲資產管理中心高雄專區，把大亞灣發展為 AI 產業與資安金融創新聚落。",
+  "source_name": "賴瑞隆競選官網｜亞洲新灣區 3.0：大亞灣計畫",
+  "source_url": "https://www.zenolai.tw/policy/vision/1",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 2
+ },
+ {
+  "districts": [
+   "小港區"
+  ],
+  "category": "產業",
+  "title": "大林蒲遷村後轉型",
+  "body": "大林蒲遷村後，轉型為新材料循環產業園區。",
+  "source_name": "賴瑞隆競選官網｜亞洲新灣區 3.0：大亞灣計畫",
+  "source_url": "https://www.zenolai.tw/policy/vision/1",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 3
+ },
+ {
+  "districts": [
+   "小港區"
+  ],
+  "category": "交通",
+  "title": "機場新航廈",
+  "body": "高雄機場新航廈將年運量提升到 1,650 萬人次。",
+  "source_name": "賴瑞隆競選官網｜亞洲新灣區 3.0：大亞灣計畫",
+  "source_url": "https://www.zenolai.tw/policy/vision/1",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 4
+ },
+ {
+  "districts": [
+   "_port"
+  ],
+  "category": "交通",
+  "title": "立體交通串聯",
+  "body": "掌握高鐵南延，串聯捷運黃線、紅線延伸、國道七號與高屏二快，連結港口與半導體 S 廊帶。",
+  "source_name": "賴瑞隆競選官網｜亞洲新灣區 3.0：大亞灣計畫",
+  "source_url": "https://www.zenolai.tw/policy/vision/1",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 5
+ },
+ {
+  "districts": [
+   "_port"
+  ],
+  "category": "交通",
+  "title": "24 小時海上國際機場",
+  "body": "官網列出「爭取新設 24 小時海上國際機場」，頁面目前沒有細節與地點。",
+  "source_name": "賴瑞隆競選官網｜爭取新設 24 小時海上國際機場",
+  "source_url": "https://www.zenolai.tw/policy/vision/4",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 6
+ },
+ {
+  "districts": [
+   "_north"
+  ],
+  "category": "產業",
+  "title": "傳產再起",
+  "body": "「世界螺絲之都」傳產導入 AI 與航太技術全面升級，並與半導體 S 廊帶合作，打造南部精密製造中心。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 7
+ },
+ {
+  "districts": [
+   "_north"
+  ],
+  "category": "產業",
+  "title": "精密製造中心",
+  "body": "協助扣件、金屬、塑膠製品業者導入智慧機械、能源管理與綠電。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 8
+ },
+ {
+  "districts": [
+   "岡山區",
+   "路竹區"
+  ],
+  "category": "交通",
+  "title": "捷運岡山路竹延伸線",
+  "body": "推動岡山路竹延伸線與捷運紫線，搭配高屏二快、台 61 南北濱海道路串成生活圈。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 9
+ },
+ {
+  "districts": [
+   "茄萣區",
+   "永安區",
+   "彌陀區",
+   "梓官區"
+  ],
+  "category": "產業",
+  "title": "海線智慧漁港",
+  "body": "海線全面升級智慧漁港，發展藍色觀光。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 10
+ },
+ {
+  "districts": [
+   "阿蓮區",
+   "田寮區",
+   "燕巢區"
+  ],
+  "category": "農業",
+  "title": "山線科技農業",
+  "body": "山線導入科技農業。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 11
+ },
+ {
+  "districts": [
+   "田寮區",
+   "燕巢區",
+   "岡山區",
+   "大社區"
+  ],
+  "category": "觀光",
+  "title": "山湖生態生活圈",
+  "body": "串聯月世界、阿公店水庫與觀音山的生態與生活圈。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 12
+ },
+ {
+  "districts": [
+   "岡山區"
+  ],
+  "category": "建設",
+  "title": "岡山副都心",
+  "body": "建設岡山成為北高雄副都心。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 13
+ },
+ {
+  "districts": [
+   "橋頭區"
+  ],
+  "category": "建設",
+  "title": "橋頭新市鎮",
+  "body": "建設橋頭新市鎮。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 14
+ },
+ {
+  "districts": [
+   "_north"
+  ],
+  "category": "醫療",
+  "title": "四大醫療體系",
+  "body": "整合四大醫療體系照顧北高雄居民。",
+  "source_name": "賴瑞隆競選官網｜北高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/2",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 15
+ },
+ {
+  "districts": [
+   "_east"
+  ],
+  "category": "農業",
+  "title": "以人、土地為本的農業",
+  "body": "深化青農組織、活化農會、農業異業品牌合作、擴大友善耕作、強化蔬果冷鏈、推廣食農教育。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 16
+ },
+ {
+  "districts": [
+   "_east"
+  ],
+  "category": "防災",
+  "title": "智慧防災韌性",
+  "body": "水源保護與河川野溪整治；以大數據與智慧設備監測水情、提升蓄洪；改善防災教育與避難空間。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 17
+ },
+ {
+  "districts": [
+   "_east"
+  ],
+  "category": "生活",
+  "title": "多功能社宅",
+  "body": "社宅結合托育中心、共融遊戲場與長照據點。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 18
+ },
+ {
+  "districts": [
+   "_east"
+  ],
+  "category": "醫療",
+  "title": "醫療照護共融",
+  "body": "提升區域醫院設備與人力、強化急重症；社區預防照護與長照據點；共餐與送餐關懷。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 19
+ },
+ {
+  "districts": [
+   "茂林區",
+   "桃源區",
+   "那瑪夏區",
+   "六龜區",
+   "甲仙區"
+  ],
+  "category": "醫療",
+  "title": "行動健康服務進山區",
+  "body": "以行動醫療車與巡迴診療服務偏鄉山區。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 20
+ },
+ {
+  "districts": [
+   "_east"
+  ],
+  "category": "觀光",
+  "title": "宗教文化與藝陣體驗",
+  "body": "發揚在地信仰與民俗藝陣。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 21
+ },
+ {
+  "districts": [
+   "六龜區"
+  ],
+  "category": "觀光",
+  "title": "溫泉廊帶",
+  "body": "結合溫泉與農村體驗旅遊。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 22
+ },
+ {
+  "districts": [
+   "茂林區",
+   "桃源區",
+   "那瑪夏區"
+  ],
+  "category": "文化",
+  "title": "原民文化與部落故事",
+  "body": "推廣原住民族群文化與山城魅力。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 23
+ },
+ {
+  "districts": [
+   "美濃區",
+   "杉林區"
+  ],
+  "category": "文化",
+  "title": "客家文化與客莊經濟",
+  "body": "傳承客家文化，帶動客莊產業。",
+  "source_name": "賴瑞隆競選官網｜東高雄大願景",
+  "source_url": "https://www.zenolai.tw/policy/vision/3",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 24
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "育兒",
+  "title": "高雄好孕來",
+  "body": "孕婦可領幸福孕哺枕；擴大孕期醫療與心理諮詢；產檢乘車補助每胎最高 50 趟；生育津貼每胎由 3 萬提高到 5 萬元。",
+  "source_name": "賴瑞隆競選官網｜幸福首都工程",
+  "source_url": "https://www.zenolai.tw/policy/youth/9",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 25
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "育兒",
+  "title": "高雄好養育",
+  "body": "育兒津貼提高到最高每月 1 萬元；0–6 歲兒童成長津貼每月再加 1,000 元；增設公托與準公托，每年 60 小時延托券。",
+  "source_name": "賴瑞隆競選官網｜幸福首都工程",
+  "source_url": "https://www.zenolai.tw/policy/youth/9",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 26
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "育兒",
+  "title": "高雄好友善",
+  "body": "成立高雄育兒基金、寶貝禮包，廣設特色兒童公園與兒童圖書館。",
+  "source_name": "賴瑞隆競選官網｜幸福首都工程",
+  "source_url": "https://www.zenolai.tw/policy/youth/9",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 27
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "長照",
+  "title": "敬老卡加碼",
+  "body": "市民敬老卡每年由 7,200 點提高到 15,000 點。",
+  "source_name": "賴瑞隆競選官網｜幸福首都工程",
+  "source_url": "https://www.zenolai.tw/policy/youth/9",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 28
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "長照",
+  "title": "高雄好樂齡",
+  "body": "無障礙步道與樂齡公園、銀髮健身俱樂部。",
+  "source_name": "賴瑞隆競選官網｜幸福首都工程",
+  "source_url": "https://www.zenolai.tw/policy/youth/9",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 29
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "文化",
+  "title": "原住民政策七方向",
+  "body": "族語教育、支持傳統祭儀、原青就業創業、原民特色產業、部落長照與都市原民服務、串聯藝文場館與原鄉觀光。",
+  "source_name": "賴瑞隆競選官網｜原住民政策",
+  "source_url": "https://www.zenolai.tw/policy/culture/14",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 30
+ },
+ {
+  "districts": [
+   "茂林區",
+   "桃源區",
+   "那瑪夏區"
+  ],
+  "category": "建設",
+  "title": "原鄉基礎建設",
+  "body": "向中央爭取預算，改善原鄉道路、水利與公共設施。",
+  "source_name": "賴瑞隆競選官網｜原住民政策",
+  "source_url": "https://www.zenolai.tw/policy/culture/14",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 31
+ },
+ {
+  "districts": [
+   "美濃區",
+   "六龜區",
+   "杉林區",
+   "甲仙區"
+  ],
+  "category": "文化",
+  "title": "右堆客庄觀光廊帶",
+  "body": "強化「右堆文化路徑」，串聯美濃傳統工藝與美食，打造客庄觀光廊帶。",
+  "source_name": "賴瑞隆競選官網｜客家政策",
+  "source_url": "https://www.zenolai.tw/policy/culture/15",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 32
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "文化",
+  "title": "客語復興",
+  "body": "擴大校園與社區沉浸式客語教學，推客語友善商家認證。",
+  "source_name": "賴瑞隆競選官網｜客家政策",
+  "source_url": "https://www.zenolai.tw/policy/culture/15",
+  "source_date": "2026-10",
+  "display": "full",
+  "kind": "official",
+  "sort": 33
+ },
+ {
+  "districts": [
+   "岡山區"
+  ],
+  "category": "產業",
+  "title": "產業升級工具",
+  "body": "產業媒合平台、產業升級基金、先進材料與智慧製造驗證中心、重大投資在地採購。",
+  "source_name": "中央社",
+  "source_url": "https://cna.com.tw/news/aloc/202609050185.aspx",
+  "source_date": "2026-09-05",
+  "display": "link",
+  "kind": "news",
+  "sort": 34
+ },
+ {
+  "districts": [
+   "岡山區"
+  ],
+  "category": "建設",
+  "title": "岡山三支箭",
+  "body": "交通（延伸線、紫線）、產業高值化與智慧農業、宜居（公園綠地、滯洪池）。",
+  "source_name": "聯合報",
+  "source_url": "https://udn.com/news/story/124652/9664969",
+  "source_date": "2026-08-01",
+  "display": "link",
+  "kind": "news",
+  "sort": 35
+ },
+ {
+  "districts": [
+   "岡山區"
+  ],
+  "category": "建設",
+  "title": "副都心內容",
+  "body": "大鵬九村 625 戶社宅、行政中心、轉運站、綠園道與文創園區。",
+  "source_name": "Newtalk",
+  "source_url": "https://newtalk.tw/news/view/2025-11-23/1006121",
+  "source_date": "2025-11-23",
+  "display": "link",
+  "kind": "news",
+  "sort": 36
+ },
+ {
+  "districts": [
+   "橋頭區"
+  ],
+  "category": "交通",
+  "title": "橋頭路網",
+  "body": "三橫三縱路網、台 39 線延伸、岡山第二交流道。",
+  "source_name": "Newtalk",
+  "source_url": "https://newtalk.tw/news/view/2025-11-23/1006121",
+  "source_date": "2025-11-23",
+  "display": "link",
+  "kind": "news",
+  "sort": 37
+ },
+ {
+  "districts": [
+   "左營區",
+   "楠梓區",
+   "橋頭區",
+   "燕巢區",
+   "仁武區"
+  ],
+  "category": "交通",
+  "title": "捷運紫線",
+  "body": "串聯五區形成半小時生活圈。",
+  "source_name": "Newtalk",
+  "source_url": "https://newtalk.tw/news/view/2025-11-23/1006121",
+  "source_date": "2025-11-23",
+  "display": "link",
+  "kind": "news",
+  "sort": 38
+ },
+ {
+  "districts": [
+   "楠梓區"
+  ],
+  "category": "產業",
+  "title": "楠梓園區擴大",
+  "body": "擴大先進製程、封測、設備材料與研發，串聯清大、陽明交大。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6876868",
+  "source_date": "2026-09-20",
+  "display": "link",
+  "kind": "news",
+  "sort": 39
+ },
+ {
+  "districts": [
+   "左營區"
+  ],
+  "category": "交通",
+  "title": "新台 17 線",
+  "body": "推動新台 17 線全線完成。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6876868",
+  "source_date": "2026-09-20",
+  "display": "link",
+  "kind": "news",
+  "sort": 40
+ },
+ {
+  "districts": [
+   "左營區",
+   "楠梓區"
+  ],
+  "category": "生活",
+  "title": "左楠生活圈",
+  "body": "後勁溪整治、蓮池潭周邊建設、眷村文化保存持續推進。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6876868",
+  "source_date": "2026-09-20",
+  "display": "link",
+  "kind": "news",
+  "sort": 41
+ },
+ {
+  "districts": [
+   "鳳山區"
+  ],
+  "category": "生活",
+  "title": "鳳山宜居新願景",
+  "body": "改善人行環境、升級通學步道、活化歷史空間、吸引產業進駐。",
+  "source_name": "中央社",
+  "source_url": "https://cna.com.tw/news/aloc/202609120188.aspx",
+  "source_date": "2026-09-12",
+  "display": "link",
+  "kind": "news",
+  "sort": 42
+ },
+ {
+  "districts": [
+   "鳳山區",
+   "大社區",
+   "仁武區",
+   "鳥松區",
+   "大樹區"
+  ],
+  "category": "交通",
+  "title": "捷運黃線 TOD",
+  "body": "以黃線 TOD 整合住宅、商業、辦公與公共服務。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20251218151983",
+  "source_date": "2025-12-18",
+  "display": "link",
+  "kind": "news",
+  "sort": 43
+ },
+ {
+  "districts": [
+   "鳥松區"
+  ],
+  "category": "生活",
+  "title": "健康城市示範區",
+  "body": "運動休閒園區結合樂齡健康產業。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20251218151983",
+  "source_date": "2025-12-18",
+  "display": "link",
+  "kind": "news",
+  "sort": 44
+ },
+ {
+  "districts": [
+   "大樹區"
+  ],
+  "category": "交通",
+  "title": "捷運大樹線",
+  "body": "推動前瞻建設捷運大樹線。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20251218151983",
+  "source_date": "2025-12-18",
+  "display": "link",
+  "kind": "news",
+  "sort": 45
+ },
+ {
+  "districts": [
+   "大寮區"
+  ],
+  "category": "交通",
+  "title": "國道七號大寮交流道",
+  "body": "讓大型車直接上國道分流。",
+  "source_name": "創新聞/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20260913901078",
+  "source_date": "2026-09-13",
+  "display": "link",
+  "kind": "news",
+  "sort": 46
+ },
+ {
+  "districts": [
+   "大寮區"
+  ],
+  "category": "防災",
+  "title": "上寮、拷潭排水",
+  "body": "持續推動排水與滯洪池工程。",
+  "source_name": "創新聞/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20260913901078",
+  "source_date": "2026-09-13",
+  "display": "link",
+  "kind": "news",
+  "sort": 47
+ },
+ {
+  "districts": [
+   "林園區"
+  ],
+  "category": "交通",
+  "title": "紅線延伸林園",
+  "body": "捷運紅線延伸至林園。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20251218151983",
+  "source_date": "2025-12-18",
+  "display": "link",
+  "kind": "news",
+  "sort": 48
+ },
+ {
+  "districts": [
+   "旗山區",
+   "美濃區"
+  ],
+  "category": "交通",
+  "title": "大旗美軌道",
+  "body": "捷運旗山美濃線、紫線延伸大旗美可行性評估、評估旗山快速道路。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6878524",
+  "source_date": "2026-09",
+  "display": "link",
+  "kind": "news",
+  "sort": 49
+ },
+ {
+  "districts": [
+   "六龜區"
+  ],
+  "category": "交通",
+  "title": "六龜聯外",
+  "body": "高 133 線重建、改善聯外道路；新威大橋延伸國道 10 號里港交流道。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6878524",
+  "source_date": "2026-09",
+  "display": "link",
+  "kind": "news",
+  "sort": 50
+ },
+ {
+  "districts": [
+   "甲仙區"
+  ],
+  "category": "觀光",
+  "title": "甲仙溫泉",
+  "body": "溫泉體驗發展為旅遊示範重鎮。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20251218151983",
+  "source_date": "2025-12-18",
+  "display": "link",
+  "kind": "news",
+  "sort": 51
+ },
+ {
+  "districts": [
+   "三民區"
+  ],
+  "category": "生活",
+  "title": "三民幸福城區",
+  "body": "交通改善、生活環境與公共建設升級（報導未列具體項目）。",
+  "source_name": "Newtalk",
+  "source_url": "https://newtalk.tw/news/view/2026-08-01/1050762",
+  "source_date": "2026-08-01",
+  "display": "link",
+  "kind": "news",
+  "sort": 52
+ },
+ {
+  "districts": [
+   "前金區",
+   "新興區",
+   "苓雅區"
+  ],
+  "category": "生活",
+  "title": "老商圈重振",
+  "body": "青創補助重振新堀江、玉竹與三多商圈；加碼敬老卡、廣設長照托育。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20260913683228",
+  "source_date": "2026-09-13",
+  "display": "link",
+  "kind": "news",
+  "sort": 53
+ },
+ {
+  "districts": [
+   "鼓山區"
+  ],
+  "category": "建設",
+  "title": "中鼓山宜居特區",
+  "body": "加速推動中鼓山宜居特區、提升壽山動物園服務。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20260913683228",
+  "source_date": "2026-09-13",
+  "display": "link",
+  "kind": "news",
+  "sort": 54
+ },
+ {
+  "districts": [
+   "鼓山區",
+   "鹽埕區",
+   "旗津區"
+  ],
+  "category": "觀光",
+  "title": "港灣盛事",
+  "body": "結合大港閱冰、旗津風箏節與商圈活動。",
+  "source_name": "今傳媒/蕃新聞",
+  "source_url": "https://n.yam.com/Article/20260913683228",
+  "source_date": "2026-09-13",
+  "display": "link",
+  "kind": "news",
+  "sort": 55
+ },
+ {
+  "districts": [
+   "前鎮區"
+  ],
+  "category": "觀光",
+  "title": "大巨蛋",
+  "body": "205 兵工廠興建大巨蛋，目標亞洲演唱會與賽事之都。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6768690",
+  "source_date": "2025-12",
+  "display": "link",
+  "kind": "news",
+  "sort": 56
+ },
+ {
+  "districts": [
+   "旗津區"
+  ],
+  "category": "交通",
+  "title": "旗津無人載具",
+  "body": "推動旗津無人載具試辦。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6768690",
+  "source_date": "2025-12",
+  "display": "link",
+  "kind": "news",
+  "sort": 57
+ },
+ {
+  "districts": [
+   "小港區"
+  ],
+  "category": "生活",
+  "title": "小港四個打拚",
+  "body": "交通加速、機場港區轉型、大林蒲遷村、公園綠地與托育長照。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6811366",
+  "source_date": "2026-04-26",
+  "display": "link",
+  "kind": "news",
+  "sort": 58
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "防災",
+  "title": "民防四方守護",
+  "body": "提升義警、義交、義消、義刑的裝備、安全與待遇。",
+  "source_name": "中央社",
+  "source_url": "https://cna.com.tw/news/aloc/202608160041.aspx",
+  "source_date": "2026-08-16",
+  "display": "link",
+  "kind": "news",
+  "sort": 59
+ },
+ {
+  "districts": [
+   "_city"
+  ],
+  "category": "觀光",
+  "title": "觀光高雄隊",
+  "body": "AI 精準行銷、「高雄盛事城」套票、數位旅遊卡。",
+  "source_name": "NOWnews",
+  "source_url": "https://www.nownews.com/news/6768690",
+  "source_date": "2025-12",
+  "display": "link",
+  "kind": "news",
+  "sort": 60
+ }
+]

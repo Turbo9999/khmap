@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>高雄政見方塊地圖</title>
+<meta name="description" content="非官方整理：用方塊立體地圖瀏覽賴瑞隆在高雄 38 區提出的政見，每條附官網或新聞來源。">
+<meta name="theme-color" content="#bfe3f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+
+<div class="top">
+  <div class="brand">
+    <h1>高雄政見方塊地圖</h1>
+    <p><span class="badge">非官方</span>點一區看賴瑞隆在當地的政見；點小人聽他說一條。資料整理自競選官網與新聞，每條附來源。</p>
+  </div>
+  <div class="tools">
+    <button class="btn" id="bAll" type="button">全市</button>
+    <button class="btn" id="bCore" type="button">市中心</button>
+    <button class="btn" id="bList" type="button">38 區</button>
+    <button class="btn" id="bCity" type="button">全市政見</button>
+    <button class="btn" id="bNight" type="button" aria-pressed="false">夜晚</button>
+  </div>
+  <div class="search">
+    <input id="q" type="search" placeholder="搜尋行政區或地標，例如：蓮池潭" autocomplete="off" aria-label="搜尋行政區或地標">
+    <div class="sugg" id="sugg" hidden></div>
+  </div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="hint" id="hint">拖曳旋轉・雙指縮放・點區域或小人</div>
+<div class="credit">資料來源見各條・<a href="admin.html">管理</a>・Powered by <a href="mailto:pkddqq@gmail.com">Turbo Labs</a><span class="v">v1023.001</span></div>
+
+<section id="sheet" class="closed" aria-live="polite">
+  <div class="grab" id="grab"><span></span></div>
+  <div class="sh-head">
+    <div class="t"><h2 id="shTitle">選一區</h2><div class="sub" id="shSub">地圖上點任一區</div></div>
+    <button class="x" id="shX" type="button" aria-label="關閉">×</button>
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="sh-body" id="shBody"></div>
+</section>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

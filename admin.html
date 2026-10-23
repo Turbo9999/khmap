@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>政見地圖管理</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{overflow:auto;background:var(--paper2)}
+.wrap{max-width:1100px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.a{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:16px}
+header.a h1{margin:0;font-size:22px;font-weight:800}
+.panel{background:var(--paper);border:3px solid var(--ink);padding:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+label{font-size:13px;font-weight:700;display:block;margin-bottom:4px}
+input[type=text],input[type=email],input[type=password],input[type=url],input[type=number],select,textarea{font:inherit;font-size:15px;width:100%;padding:8px 10px;border:2px solid var(--ink);background:var(--paper);color:var(--ink)}
+textarea{min-height:110px;resize:vertical;line-height:1.6}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.f2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:2px;min-width:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:4px;max-height:220px;overflow:auto;border:2px solid var(--line);padding:8px}
+.dgrid label{font-weight:500;font-size:13.5px;display:flex;gap:5px;align-items:center;margin:0}
+.dgrid .rg{grid-column:1/-1;font-size:12px;font-weight:800;color:var(--muted);margin-top:4px}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;background:var(--paper);border:2px solid var(--ink);padding:10px 12px}
+.item h3{margin:0;font-size:15.5px}
+.item .m{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5;word-break:break-all}
+.item.off{opacity:.55}
+.msg{font-size:14px;padding:8px 12px;border:2px solid var(--ink);background:#fff4c2;color:#3a2f00;margin-bottom:12px}
+.msg.err{background:#ffd9d2;color:#5a1308}
+.btn.small{font-size:12.5px;padding:4px 9px;box-shadow:0 2px 0 var(--ink)}
+.btn.danger{background:#c8402f;color:#fff;border-color:#7a2219}
+dialog{border:3px solid var(--ink);padding:0;max-width:760px;width:calc(100% - 24px);background:var(--paper);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog form{padding:16px;display:flex;flex-direction:column;gap:12px}
+code{background:var(--paper2);padding:1px 5px}
+ol{line-height:1.8;padding-left:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="a"><h1>政見地圖管理</h1><div class="row"><a class="btn" href="index.html">回地圖</a><button class="btn" id="out" type="button" hidden>登出</button></div></header>
+  <div id="msg"></div>
+
+  <section class="panel" id="setup" hidden>
+    <h2 style="margin-top:0">還沒接上 Supabase</h2>
+    <ol>
+      <li>到 Supabase 建立專案（建議 Tokyo 區域）。</li>
+      <li>SQL Editor 貼上 repo 裡的 <code>supabase/schema.sql</code> 執行，最後一行把自己的 email 加進 <code>admins</code>。</li>
+      <li>Authentication → Users 新增同一個 email 的帳號並設定密碼。</li>
+      <li>把 Project URL 與 anon key 填進 <code>config.js</code>，推上 GitHub，Cloudflare Pages 會自動部署。</li>
+      <li>回到這頁登入，按「匯入初始資料」。</li>
+    </ol>
+    <p>目前地圖讀的是 repo 內的 <code>data/seed.json</code>。</p>
+  </section>
+
+  <section class="panel" id="login" hidden>
+    <h2 style="margin-top:0">管理員登入</h2>
+    <form id="lf" class="f2">
+      <div class="field"><label for="em">Email</label><input id="em" type="email" required autocomplete="username"></div>
+      <div class="field"><label for="pw">密碼</label><input id="pw" type="password" required autocomplete="current-password"></div>
+      <div class="row"><button class="btn" type="submit">登入</button></div>
+    </form>
+  </section>
+
+  <section id="app" hidden>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <div class="field" style="width:180px"><label for="fd">行政區</label><select id="fd"></select></div>
+          <div class="field" style="width:220px"><label for="fq">搜尋</label><input id="fq" type="text" placeholder="標題或內容"></div>
+        </div>
+        <div class="row"><button class="btn" id="add" type="button">＋ 新增政見</button><button class="btn" id="seed" type="button">匯入初始資料</button></div>
+      </div>
+      <p id="count" style="font-size:13px;color:var(--muted);margin:10px 0 0"></p>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+</div>
+
+<dialog id="dlg">
+  <form id="ef" method="dialog">
+    <h2 style="margin:0" id="dt">新增政見</h2>
+    <div class="field"><label for="e_title">標題</label><input id="e_title" type="text" required maxlength="80"></div>
+    <div class="field"><label for="e_body">內容（直接顯示時會完整出現在地圖上）</label><textarea id="e_body"></textarea></div>
+    <div class="f2">
+      <div class="field"><label for="e_cat">分類</label><select id="e_cat"></select></div>
+      <div class="field"><label>顯示方式</label>
+        <div class="row" style="padding:6px 0"><label style="font-weight:500"><input type="radio" name="disp" value="full" checked> 直接顯示內容</label><label style="font-weight:500"><input type="radio" name="disp" value="link"> 標題＋新聞連結</label></div></div>
+      <div class="field"><label for="e_src">來源名稱</label><input id="e_src" type="text" placeholder="例：中央社、賴瑞隆競選官網"></div>
+      <div class="field"><label for="e_date">日期</label><input id="e_date" type="text" placeholder="2026-10-23"></div>
+      <div class="field" style="grid-column:1/-1"><label for="e_url">來源連結</label><input id="e_url" type="url" placeholder="https://"></div>
+      <div class="field"><label for="e_kind">類型</label><select id="e_kind"><option value="official">官網</option><option value="news">新聞</option><option value="other">其他</option></select></div>
+      <div class="field"><label for="e_sort">排序（小的在前）</label><input id="e_sort" type="number" value="0"></div>
+    </div>
+    <div class="field"><label>適用範圍（可複選）</label><div class="dgrid" id="e_d"></div></div>
+    <label style="font-weight:500"><input type="checkbox" id="e_pub" checked> 已發布（取消勾選就只有管理員看得到）</label>
+    <div id="emsg"></div>
+    <div class="row" style="justify-content:space-between">
+      <button class="btn danger" type="button" id="del" hidden>刪除</button>
+      <div class="row" style="margin-left:auto"><button class="btn" type="button" id="cancel">取消</button><button class="btn on" type="submit" id="save">儲存</button></div>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
