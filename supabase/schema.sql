@@ -1,4 +1,4 @@
--- 高雄政見方塊地圖 — Supabase 資料表
+-- 隆捲風政策島 — Supabase 資料表
 -- 在 Supabase Dashboard → SQL Editor 貼上執行一次即可。
 
 create table if not exists public.policies (
