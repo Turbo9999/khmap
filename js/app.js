@@ -12,9 +12,11 @@ const REGION = { north: { name: '北高雄', v: '--north' }, east: { name: '東�
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
 /* ---------- 場景 ---------- */
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// 低階手機：降解析度、關陰影、少一點小人
+const LOW = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || innerWidth < 500;
+const renderer = new THREE.WebGLRenderer({ antialias: !LOW, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, LOW ? 1.25 : 2));
+renderer.shadowMap.enabled = !LOW; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 $('stage').appendChild(renderer.domElement);
 const scene = new THREE.Scene();
@@ -23,7 +25,7 @@ scene.background = new THREE.Color(DAY.sky);
 scene.fog = new THREE.Fog(DAY.fog, 160, 420);
 const camera = new THREE.PerspectiveCamera(36, 1, .05, 1200);
 const controls = new OrbitControls(camera, renderer.domElement);
-Object.assign(controls, { enableDamping: true, dampingFactor: .08, maxPolarAngle: Math.PI * .45, minDistance: 1.2, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 1.2 });
+Object.assign(controls, { enableDamping: true, dampingFactor: .12, maxPolarAngle: Math.PI * .45, minDistance: 1.2, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 3.2, zoomToCursor: true });
 // 像地圖一樣：單指／左鍵拖曳＝平移；雙指＝縮放與旋轉；右鍵／Ctrl＋拖曳＝旋轉
 controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
@@ -31,7 +33,7 @@ controls.panSpeed = 1.1;
 
 const hemi = new THREE.HemisphereLight(0xffffff, 0x6b7f6b, DAY.hemi); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff1dc, DAY.sun);
-sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = .02;
+sun.castShadow = !LOW; sun.shadow.mapSize.set(LOW ? 1024 : 2048, LOW ? 1024 : 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = .02;
 scene.add(sun, sun.target);
 const moon = new THREE.PointLight(0xffd9a0, 0, 30); scene.add(moon);
 
@@ -247,6 +249,18 @@ renderer.domElement.addEventListener('pointerup', e => {
   if (ht) { const c = world.cells[ht.instanceId]; select(c.d, { move: false }); }
 });
 setTimeout(() => $('hint').style.opacity = 0, 7000);
+// 雙擊／雙點兩下：往那個位置放大一大步
+function zoomBy(factor, at) {
+  let target = controls.target.clone();
+  if (at) { ptr.set(at[0] / innerWidth * 2 - 1, -(at[1] / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera); const h = ray.intersectObject(world.mesh, false)[0]; if (h) target = h.point.clone(); }
+  const dist = Math.min(controls.maxDistance, Math.max(controls.minDistance, camera.position.distanceTo(controls.target) * factor));
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  fly = { t0: performance.now() - (reduce ? 400 : 0), dur: 400, fT: controls.target.clone(), tT: target, fP: camera.position.clone(), tP: target.clone().add(dir.multiplyScalar(dist)) };
+}
+renderer.domElement.addEventListener('dblclick', e => zoomBy(.4, [e.clientX, e.clientY]));
+let lastTap = 0;
+renderer.domElement.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') return; const now = performance.now(); if (now - lastTap < 300) { zoomBy(.4, [e.clientX, e.clientY]); lastTap = 0; } else lastTap = now; });
+$('zin').onclick = () => zoomBy(.45); $('zout').onclick = () => zoomBy(2.2);
 
 function talk(i) {
   const p = people.poke(i); if (!p) return;
@@ -303,7 +317,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', legend);
 tick();
 loadPolicies().then(({ rows }) => {
   indexRows(rows); refreshCounts();
-  people = buildPeople(scene, world, lm, di => 1 + Math.min(6, itemsOf(world.D[di].name).length) + (world.D[di].urban ? 2 : 0), innerWidth < 600 ? 60 : 90);
+  people = buildPeople(scene, world, lm, di => 1 + Math.min(6, itemsOf(world.D[di].name).length) + (world.D[di].urban ? 2 : 0), LOW ? 45 : innerWidth < 600 ? 60 : 90);
   const h = decodeURIComponent(location.hash.slice(1));
   if (h) { const di = world.D.findIndex(d => d.name === h || d.name === h + '區'); if (di >= 0) select(di); }
 });

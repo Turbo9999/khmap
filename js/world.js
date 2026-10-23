@@ -128,21 +128,8 @@ export function buildWorld(scene) {
   scene.add(mesh);
 
   // 海
-  const seaMat = new THREE.MeshLambertMaterial({ color: 0x3f86c4, transparent: true, opacity: .92 });
-  seaMat.onBeforeCompile = sh => {
-    sh.uniforms.uTime = seaUniform;
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWp;')
-      .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvWp = (modelMatrix * vec4(transformed,1.0)).xyz;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uTime; varying vec3 vWp;\nfloat h2(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}')
-      .replace('vec4 diffuseColor = vec4( diffuse, opacity );', `
-        vec2 c = floor(vWp.xz / 0.25);
-        float t = floor(uTime * 2.0);
-        float n = h2(c + vec2(t * 0.0, 0.0));
-        float w = step(0.965, h2(c + floor(uTime * 0.8)));
-        vec3 col = diffuse * (0.88 + 0.14 * n) + vec3(w * 0.35);
-        vec4 diffuseColor = vec4(col, opacity);`);
-  };
-  const seaUniform = { value: 0 };
+  // 海：單色平面，不做動畫（省效能）
+  const seaMat = new THREE.MeshLambertMaterial({ color: 0x4a8fc8 });
   const sea = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), seaMat);
   sea.rotation.x = -Math.PI / 2; sea.position.set(0, V * 0.55, 0); sea.receiveShadow = true;
   scene.add(sea);
@@ -188,7 +175,6 @@ export function buildWorld(scene) {
   const baseT = tList.map((t, n) => { const a = new THREE.Matrix4(), b = new THREE.Matrix4(); trunk.getMatrixAt(n, a); leaf.getMatrixAt(n, b); return [a, b]; });
   const tmp = new THREE.Matrix4();
   function update(dt, t) {
-    seaUniform.value = t;
     let dirty = false, decoDirty = false;
     for (let di = 0; di < D.length; di++) {
       const v = lift[di], g = goal[di]; if (Math.abs(v - g) < .001) continue;
