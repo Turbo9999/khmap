@@ -152,11 +152,8 @@ export function buildCharacters(scene, world) {
   const meshes = []; list.forEach(c => { c.g.traverse(o => o.isMesh && meshes.push(o)); c.extra.dog && c.extra.dog.traverse(o => o.isMesh && meshes.push(o)); c.extra.stall && c.extra.stall.traverse(o => o.isMesh && meshes.push(o)); });
 
   function pick(c) {
-    for (let k = 0; k < 8; k++) {
-      const x = c.home.x + (Math.random() - .5) * c.roam * 2, z = c.home.z + (Math.random() - .5) * c.roam * 2;
-      if (world.districtAt(x, z) === c.di) { c.tx = x; c.tz = z; return; }
-    }
-    c.tx = c.home.x; c.tz = c.home.z;
+    const f = world.freePoint(c.di, c.home, c.roam);
+    if (f) { c.tx = f.x; c.tz = f.z; } else { c.tx = c.home.x; c.tz = c.home.z; }
   }
   function update(dt, t, reduce) {
     for (const c of list) {
@@ -166,7 +163,9 @@ export function buildCharacters(scene, world) {
       else {
         const dx = c.tx - g.position.x, dz = c.tz - g.position.z, L = Math.hypot(dx, dz);
         if (L < .02) { c.wait = 1.5 + Math.random() * 3; pick(c); }
-        else { const s = Math.min(L, c.sp * dt); g.position.x += dx / L * s; g.position.z += dz / L * s; g.rotation.y = Math.atan2(dx, dz); swing = c.extra.scooter ? 0 : Math.sin(t * 10 + c.ph) * .7; }
+        else { const s = Math.min(L, c.sp * dt), nx = g.position.x + dx / L * s, nz = g.position.z + dz / L * s;
+          if (world.isBlocked(nx, nz) && !world.isBlocked(g.position.x, g.position.z)) { c.wait = .3; pick(c); continue; }
+          g.position.x = nx; g.position.z = nz; g.rotation.y = Math.atan2(dx, dz); swing = c.extra.scooter ? 0 : Math.sin(t * 10 + c.ph) * .7; }
       }
       c.armL.rotation.x = c.look.stroller ? -1.2 : swing; c.armR.rotation.x = c.look.stroller ? -1.2 : (c.look.cane ? .3 : -swing);
       c.legL.rotation.x = -swing; c.legR.rotation.x = swing;
@@ -194,6 +193,19 @@ export function buildCharacters(scene, world) {
     const c = list.find(c => c.id === id); if (!c) return;
     c.home = { x, z }; c.tx = x; c.tz = z; c.di = world.districtAt(x, z); c.g.position.set(x, world.topAt(x, z), z); c.roam = .12;
   }
+  // 家的位置如果剛好在建築或地標裡，挪到最近的空地
+  function settle() {
+    for (const c of list) {
+      if (!world.isBlocked(c.home.x, c.home.z)) continue;
+      let best = null;
+      for (let r = .03; r < .6 && !best; r += .03) for (let a = 0; a < 16 && !best; a++) {
+        const x = c.home.x + Math.cos(a / 16 * 6.283) * r, z = c.home.z + Math.sin(a / 16 * 6.283) * r;
+        if (!world.isBlocked(x, z) && world.districtAt(x, z) === c.di) best = { x, z };
+      }
+      if (best) { c.home = best; c.tx = best.x; c.tz = best.z; c.g.position.set(best.x, world.topAt(best.x, best.z), best.z);
+        if (c.extra.stall) c.extra.stall.position.set(best.x + .05, world.topAt(best.x, best.z), best.z + .06); }
+    }
+  }
   function poke(i) { const c = list[i]; if (!c) return null; c.hop = .6; if (!c.extra.stall) c.wait = Math.max(c.wait, 2.5); return c; }
-  return { list, meshes, update, poke, relocate };
+  return { list, meshes, update, poke, relocate, settle };
 }

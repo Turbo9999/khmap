@@ -207,8 +207,13 @@ export function buildLandmarks(scene, world) {
     for (const it of items) lastLift[it.di] = liftOf(it.di);
     if (dirty) { mesh.instanceMatrix.needsUpdate = true; gm.instanceMatrix.needsUpdate = true; }
   }
+  // 實心方塊的佔地（貼地的草皮、步道不算；水池算，避免走在水上）
+  const footprints = () => boxes.filter(q => q.y + q.h > .9 && q.y < 3).map(q => {
+    const cx = q.item.x + q.x * U, cz = q.item.z + q.z * U, hw = q.w * U / 2, hd = q.d * U / 2;
+    return [cx - hw, cz - hd, cx + hw, cz + hd];
+  });
   return {
-    items, mesh, owner, applyLift,
+    items, mesh, owner, applyLift, footprints,
     update: t => anims.forEach(f => f(t)),
     setNight: on => { glowMat.color.setScalar(on ? 1.6 : 1); scene.traverse(o => { if (o.userData.glow && o.material) o.material.emissive.set(on ? o.material.color : 0x000000); }); },
   };

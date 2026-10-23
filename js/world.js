@@ -197,6 +197,27 @@ export function buildWorld(scene) {
     tList.forEach((q, n) => { if (near(q[0], q[2])) { baseT[n][0].copy(zero); baseT[n][1].copy(zero); trunk.setMatrixAt(n, zero); leaf.setMatrixAt(n, zero); } });
     bMesh.instanceMatrix.needsUpdate = trunk.instanceMatrix.needsUpdate = leaf.instanceMatrix.needsUpdate = true;
   }
+  // 障礙物格網：建築與地標的佔地，小人不能走進去（0.02 km 一格，外擴一點避免貼牆）
+  const GB = .02, blocked = new Set(), kb = (i, j) => (i + 20000) * 50000 + (j + 20000);
+  function blockRect(x0, z0, x1, z1) {
+    for (let i = Math.floor(x0 / GB); i <= Math.floor(x1 / GB); i++) for (let j = Math.floor(z0 / GB); j <= Math.floor(z1 / GB); j++) blocked.add(kb(i, j));
+  }
+  function finalizeBlockers(rects = []) {
+    blocked.clear();
+    bList.forEach((b, n) => { if (!baseB[n].elements[0]) return; const hx = b[3] / 2 + .014, hz = b[5] / 2 + .014; blockRect(b[0] - hx, b[2] - hz, b[0] + hx, b[2] + hz); });
+    for (const r of rects) blockRect(r[0] - .012, r[1] - .012, r[2] + .012, r[3] + .012);
+  }
+  const isBlocked = (x, z) => blocked.has(kb(Math.floor(x / GB), Math.floor(z / GB)));
+  // 在某區找一個沒被擋住的點（可指定靠近某處）
+  function freePoint(di, near = null, radius = 1.6, r = Math.random) {
+    for (let k = 0; k < 24; k++) {
+      let x, z;
+      if (near) { x = near.x + (r() - .5) * radius * 2; z = near.z + (r() - .5) * radius * 2; }
+      else { const c = randomCell(di, r); x = cellX(c.i) + (r() - .5) * B * .9; z = cellZ(c.j) + (r() - .5) * B * .9; }
+      if (districtAt(x, z) === di && !isBlocked(x, z)) return { x, z };
+    }
+    return null;
+  }
   function setNight(on) { uniforms.uNight.value = on ? 1 : 0; bMat.userData.uNight && (bMat.userData.uNight.value = on ? 1 : 0); }
 
   const topAt = (x, z) => { const [i, j] = toCell(x, z); const n = cellIndex[idx(Math.max(0, Math.min(W - 1, i)), Math.max(0, Math.min(H - 1, j)))]; return n < 0 ? V * .55 : cells[n].h * V + aLift[n]; };
@@ -212,7 +233,7 @@ export function buildWorld(scene) {
   const randomCell = (di, r = Math.random) => { const cs = D[di].cells; return cs[(r() * cs.length) | 0]; };
   const bounds = { minX: T.x0, minZ: T.y0, maxX: T.x0 + W * B, maxZ: T.y0 + H * B };
 
-  return { clearAround, liftOf: di => di < 0 ? 0 : lift[di] * .45, D, names, mesh, cells, topAt, districtAt, anchor, randomCell, cellX, cellZ, select, update, setNight, bounds, bMat, proj };
+  return { finalizeBlockers, isBlocked, freePoint, clearAround, liftOf: di => di < 0 ? 0 : lift[di] * .45, D, names, mesh, cells, topAt, districtAt, anchor, randomCell, cellX, cellZ, select, update, setNight, bounds, bMat, proj };
 }
 
 function windowShader(mat) {

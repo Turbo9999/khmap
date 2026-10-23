@@ -50,7 +50,7 @@ export function buildPeople(scene, world, landmarks, weightOf, count = 80) {
     const p = makePerson(r);
     let di, x, z, mode = 'walk';
     if (stage && n < 9) { di = stage.di; mode = 'fan'; x = stage.stage.x + (r() - .5) * .45; z = stage.stage.z + .12 + r() * .35; }
-    else { di = pool[(r() * pool.length) | 0]; const c = world.randomCell(di, r); x = world.cellX(c.i) + (r() - .5) * .3; z = world.cellZ(c.j) + (r() - .5) * .3; }
+    else { di = pool[(r() * pool.length) | 0]; const f = world.freePoint(di, null, 0, r); if (f) { x = f.x; z = f.z; } else { const c = world.randomCell(di, r); x = world.cellX(c.i); z = world.cellZ(c.j); } }
     p.g.position.set(x, world.topAt(x, z), z);
     p.g.traverse(o => { o.userData.person = people.length; });
     scene.add(p.g);
@@ -61,12 +61,9 @@ export function buildPeople(scene, world, landmarks, weightOf, count = 80) {
 
   function pickTarget(p) {
     if (p.mode === 'fan') return;
-    const c = world.randomCell(p.di);
-    // 走近一點的格子，避免一路橫越整個山區
-    const nx = world.cellX(c.i), nz = world.cellZ(c.j);
-    const dx = nx - p.g.position.x, dz = nz - p.g.position.z, L = Math.hypot(dx, dz), lim = 1.6;
-    p.tx = L > lim ? p.g.position.x + dx / L * lim : nx; p.tz = L > lim ? p.g.position.z + dz / L * lim : nz;
-    if (world.districtAt(p.tx, p.tz) !== p.di) { p.tx = nx; p.tz = nz; }
+    // 在附近找一個空地走過去（不穿過房子、不走進地標）
+    const f = world.freePoint(p.di, { x: p.g.position.x, z: p.g.position.z }, .8) || world.freePoint(p.di);
+    if (f) { p.tx = f.x; p.tz = f.z; } else { p.tx = p.g.position.x; p.tz = p.g.position.z; }
   }
   function update(dt, t, reduce) {
     for (const p of people) {
@@ -78,7 +75,9 @@ export function buildPeople(scene, world, landmarks, weightOf, count = 80) {
       else {
         const dx = p.tx - g.position.x, dz = p.tz - g.position.z, L = Math.hypot(dx, dz);
         if (L < .03) { p.wait = .8 + Math.random() * 3; pickTarget(p); }
-        else { const s = Math.min(L, p.sp * dt); g.position.x += dx / L * s; g.position.z += dz / L * s; const want = Math.atan2(dx, dz); g.rotation.y += ((want - g.rotation.y + Math.PI * 3) % (Math.PI * 2) - Math.PI) * Math.min(1, dt * 8); swing = Math.sin(t * 10 + p.ph) * .7; }
+        else { const s = Math.min(L, p.sp * dt), nx = g.position.x + dx / L * s, nz = g.position.z + dz / L * s;
+          if (world.isBlocked(nx, nz) && !world.isBlocked(g.position.x, g.position.z)) { p.wait = .3; pickTarget(p); continue; }
+          g.position.x = nx; g.position.z = nz; const want = Math.atan2(dx, dz); g.rotation.y += ((want - g.rotation.y + Math.PI * 3) % (Math.PI * 2) - Math.PI) * Math.min(1, dt * 8); swing = Math.sin(t * 10 + p.ph) * .7; }
         p.armL.rotation.x = swing; p.armR.rotation.x = -swing;
       }
       p.legL.rotation.x = -swing; p.legR.rotation.x = swing;
