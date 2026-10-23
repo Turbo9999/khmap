@@ -45,6 +45,7 @@ world.clearAround(lm.items.map(it => ({ x: it.x, z: it.z, r: .9 })));
 const transit = buildTransit(scene, world);
 lm.items.push(...transit.items);
 const chars = buildCharacters(scene, world);
+{ const st = lm.items.find(it => it.stage); if (st) chars.relocate('fan', st.stage.x + .1, st.stage.z + .5); }   // 樂迷站在大港開唱舞台前
 const center = (() => { const b = world.bounds; return new THREE.Vector3((b.minX + b.maxX) / 2 - 4, 0, (b.minZ + b.maxZ) / 2 + 6); })();
 
 /* ---------- 資料 ---------- */

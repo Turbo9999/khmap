@@ -44,7 +44,7 @@ export const CHARACTERS = [
     match: r => r.category === '文化' || /藝陣|傳統|歌仔戲|宗教/.test(text(r)) },
   { id: 'fan', name: '樂迷隆隆', role: '亮粉紅假髮、耳罩式耳機、墨鏡加潮流穿搭，揮著發光應援棒，呼應高雄的演唱會經濟。', at: [22.6205, 120.2825], d: '鹽埕區',
     look: { shirt: '#111111', pants: '#2b2b2b', hair: '#ff3fa4', wig: '#ff3fa4', headphones: true, sunglasses: true, streetwear: true, lightstick: '#ff5ec8' },
-    match: r => /演唱會|大港|巨蛋|舞台|盛事|劇場/.test(text(r)) },
+    match: r => /演唱會|大港開唱|大港閱冰|巨蛋|舞台|盛事|劇場/.test(text(r)) },
   { id: 'athlete', name: '運動選手隆隆', role: '代表體育與全民運動。', at: [22.701, 120.296], d: '左營區',
     look: { shirt: '#e8e8e8', pants: '#c0392b', headband: '#c0392b', number: true }, speed: .38,
     match: r => r.category === '運動' || /運動|體操|健身|球場/.test(text(r)) },
@@ -190,6 +190,10 @@ export function buildCharacters(scene, world) {
       if (c.extra.stall) c.extra.stall.position.y = world.topAt(c.extra.stall.position.x, c.extra.stall.position.z);
     }
   }
+  function relocate(id, x, z) {
+    const c = list.find(c => c.id === id); if (!c) return;
+    c.home = { x, z }; c.tx = x; c.tz = z; c.di = world.districtAt(x, z); c.g.position.set(x, world.topAt(x, z), z); c.roam = .12;
+  }
   function poke(i) { const c = list[i]; if (!c) return null; c.hop = .6; if (!c.extra.stall) c.wait = Math.max(c.wait, 2.5); return c; }
-  return { list, meshes, update, poke };
+  return { list, meshes, update, poke, relocate };
 }
