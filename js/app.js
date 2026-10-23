@@ -18,14 +18,14 @@ const renderer = new THREE.WebGLRenderer({ antialias: !LOW, powerPreference: 'hi
 renderer.setPixelRatio(Math.min(devicePixelRatio, LOW ? 1.25 : 2));
 renderer.shadowMap.enabled = !LOW; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-$('stage').appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const DAY = { sky: 0xbfe3f2, fog: 0xcfe9f5, hemi: 1.05, sun: 1.7 }, NIGHT = { sky: 0x0b1626, fog: 0x0b1626, hemi: .28, sun: .25 };
 scene.background = new THREE.Color(DAY.sky);
 scene.fog = new THREE.Fog(DAY.fog, 160, 420);
 const camera = new THREE.PerspectiveCamera(36, 1, .01, 1200);
-const controls = new OrbitControls(camera, renderer.domElement);
-Object.assign(controls, { enableDamping: true, dampingFactor: .12, maxPolarAngle: Math.PI * .495, minPolarAngle: 0, rotateSpeed: .9, minDistance: .12, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 3.2, zoomToCursor: true });
+$('stage').prepend(renderer.domElement);
+const controls = new OrbitControls(camera, $('stage'));
+Object.assign(controls, { enableDamping: true, dampingFactor: .1, maxPolarAngle: Math.PI * .495, minPolarAngle: 0, rotateSpeed: .9, minDistance: .12, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 2.2, zoomToCursor: true });
 // 像地圖一樣：單指／左鍵拖曳＝平移；雙指＝縮放與旋轉；右鍵／Ctrl＋拖曳＝旋轉
 controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
@@ -350,8 +350,19 @@ function talk(i) {
 /* ---------- 迴圈 ---------- */
 const clock = new THREE.Clock(); const v = new THREE.Vector3();
 const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+// 自動調整解析度：掉幀時先降畫質，保持操作順暢；穩定後再慢慢調回來
+const MAX_PR = Math.min(devicePixelRatio, LOW ? 1.25 : 2); let pr = MAX_PR, frameAvg = 16, prTimer = 0;
+function adaptRes(rawDt) {
+  frameAvg = frameAvg * .92 + rawDt * 1000 * .08; prTimer += rawDt;
+  if (prTimer < .8) return; prTimer = 0;
+  let next = pr;
+  if (frameAvg > 24 && pr > 1) next = Math.max(1, pr - .25);
+  else if (frameAvg < 15 && pr < MAX_PR) next = Math.min(MAX_PR, pr + .25);
+  if (next !== pr) { pr = next; renderer.setPixelRatio(pr); renderer.setSize(innerWidth, innerHeight); }
+}
 function tick() {
-  const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
+  const raw = clock.getDelta(); adaptRes(raw);
+  const dt = Math.min(raw, .05), t = clock.elapsedTime;
   if (fly) { const k = Math.min(1, (performance.now() - fly.t0) / fly.dur), e = ease(k); controls.target.lerpVectors(fly.fT, fly.tT, e); camera.position.lerpVectors(fly.fP, fly.tP, e); if (k >= 1) fly = null; }
   stepOffset(dt);
   if (follow) {
@@ -399,6 +410,12 @@ function tick() {
 // 手機網址列伸縮時，用實際可見高度
 function setVH() { document.documentElement.style.setProperty('--vh', (window.visualViewport ? visualViewport.height : innerHeight) + 'px'); }
 setVH(); (window.visualViewport || window).addEventListener('resize', setVH);
+
+/* ---------- 擋掉瀏覽器整頁縮放（iPhone 不理會 user-scalable=no） ---------- */
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTouchEnd < 320 && !e.target.closest('input,textarea')) e.preventDefault(); lastTouchEnd = now; }, { passive: false });
 
 /* ---------- 選單折疊 ---------- */
 const root = document.documentElement, menuBtn = $('menu');

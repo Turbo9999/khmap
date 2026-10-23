@@ -17,7 +17,11 @@
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 /* 介面不超出螢幕寬度 */
-html.map,html.map body{overflow:hidden;overscroll-behavior:none}
+/* 只有地圖會縮放；整個網頁（按鈕、面板）不會被瀏覽器放大 */
+html.map,html.map body{overflow:hidden;overscroll-behavior:none;touch-action:none}
+html.map button,html.map a,html.map input{touch-action:manipulation}
+html.map .lbl,html.map .pin{touch-action:none}
+html.map .sh-body,html.map .sugg,html.map .filters{touch-action:pan-x pan-y}
 .top{max-width:100%;box-sizing:border-box}
 body{background:var(--sky);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased}
 button{font-family:inherit}
@@ -25,7 +29,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 #stage{position:fixed;inset:0;touch-action:none}
 #stage canvas{display:block}
-#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+#labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+#stage canvas{position:absolute;inset:0}
 .lbl{position:absolute;transform:translate(-50%,-100%);font-weight:700;font-size:12px;line-height:1;color:var(--ink);
   background:var(--paper);padding:4px 7px;border:2px solid var(--ink);white-space:nowrap;box-shadow:2px 2px 0 rgba(0,0,0,.25);
   pointer-events:auto;cursor:pointer;user-select:none}
