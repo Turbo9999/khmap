@@ -236,18 +236,42 @@ q.addEventListener('input', () => {
 q.addEventListener('keydown', e => { if (e.key === 'Escape') { sugg.hidden = true; q.blur(); } });
 
 /* ---------- 點選 ---------- */
-const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down = null;
-renderer.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; sugg.hidden = true; if (follow) stopFollow(); });
-renderer.domElement.addEventListener('pointerup', e => {
-  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
-  ptr.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera);
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+// 手勢判斷：只有「一根手指、沒移動、很快放開」才算點擊；雙指縮放放手時不會誤觸點選或放大
+const active = new Map(); let gest = null, lastTap = null, tapTimer = 0;
+renderer.domElement.addEventListener('pointerdown', e => {
+  sugg.hidden = true; if (follow) stopFollow();
+  if (!active.size) gest = { t: performance.now(), x: e.clientX, y: e.clientY, multi: false, moved: 0 };
+  else gest.multi = true;
+  active.set(e.pointerId, [e.clientX, e.clientY]);
+});
+renderer.domElement.addEventListener('pointermove', e => {
+  if (!gest || !active.has(e.pointerId)) return;
+  gest.moved = Math.max(gest.moved, Math.hypot(e.clientX - gest.x, e.clientY - gest.y));
+});
+function endPointer(e) {
+  if (!active.delete(e.pointerId) || active.size) return;
+  const g = gest; gest = null;
+  if (!g || g.multi || g.moved > 8 || performance.now() - g.t > 450) { lastTap = null; return; }
+  const now = performance.now();
+  if (lastTap && now - lastTap.t < 320 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 40) {
+    clearTimeout(tapTimer); lastTap = null; zoomBy(.4, [e.clientX, e.clientY]); return;   // 點兩下放大
+  }
+  lastTap = { t: now, x: e.clientX, y: e.clientY };
+  const x = e.clientX, y = e.clientY;
+  tapTimer = setTimeout(() => tapAt(x, y), e.pointerType === 'touch' ? 260 : 0);
+}
+renderer.domElement.addEventListener('pointerup', endPointer);
+renderer.domElement.addEventListener('pointercancel', e => { active.delete(e.pointerId); if (!active.size) gest = null; });
+function tapAt(x, y) {
+  ptr.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera);
   $('hint').style.opacity = 0;
   if (people) { const hp = ray.intersectObjects(people.meshes, false)[0]; if (hp) { talk(hp.object.userData.person); return; } }
   const hl = ray.intersectObject(lm.mesh, false)[0];
   const ht = ray.intersectObject(world.mesh, false)[0];
   if (hl && (!ht || hl.distance <= ht.distance + .05)) { showLandmark(lm.owner[hl.instanceId]); return; }
   if (ht) { const c = world.cells[ht.instanceId]; select(c.d, { move: false }); }
-});
+}
 setTimeout(() => $('hint').style.opacity = 0, 7000);
 // 越近看越斜：遠時俯瞰，近到街道高度時幾乎平視
 const tiltFor = d => { const k = Math.min(1, Math.max(0, (12 - d) / 11)); return .62 + k * k * .6; };
@@ -287,9 +311,6 @@ function zoomBy(factor, at, tilt = false) {
   const dir = useTilt ? tiltDir(dist) : camera.position.clone().sub(controls.target).normalize();
   fly = { t0: performance.now() - (reduce ? 400 : 0), dur: 400, fT: controls.target.clone(), tT: target, fP: camera.position.clone(), tP: target.clone().add(dir.multiplyScalar(dist)) };
 }
-renderer.domElement.addEventListener('dblclick', e => zoomBy(.4, [e.clientX, e.clientY]));
-let lastTap = 0;
-renderer.domElement.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') return; const now = performance.now(); if (now - lastTap < 300) { zoomBy(.4, [e.clientX, e.clientY]); lastTap = 0; } else lastTap = now; });
 $('zin').onclick = () => zoomBy(.45); $('zout').onclick = () => zoomBy(2.2);
 // 拖曳模式：移動地圖 ↔ 轉視角
 let dragRotate = false;
@@ -373,6 +394,14 @@ function tick() {
   }
   requestAnimationFrame(tick);
 }
+
+/* ---------- 鎖住頁面，不讓瀏覽器自己縮放或捲動 ---------- */
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
+document.addEventListener('touchmove', e => { if (e.touches.length > 1 && !e.target.closest('#stage')) e.preventDefault(); }, { passive: false });
+document.addEventListener('dblclick', e => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
+// 手機網址列伸縮時，用實際可見高度
+function setVH() { document.documentElement.style.setProperty('--vh', (window.visualViewport ? visualViewport.height : innerHeight) + 'px'); }
+setVH(); (window.visualViewport || window).addEventListener('resize', setVH);
 
 /* ---------- 啟動 ---------- */
 legend();
