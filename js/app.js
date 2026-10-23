@@ -4,6 +4,7 @@ import { buildWorld, V } from './world.js';
 import { buildLandmarks } from './landmarks.js';
 import { buildPeople } from './people.js';
 import { buildTransit } from './transit.js';
+import { buildCharacters } from './characters.js';
 import { loadPolicies, REGION_KEYS } from './data.js';
 
 const $ = id => document.getElementById(id);
@@ -43,6 +44,7 @@ const lm = buildLandmarks(scene, world);
 world.clearAround(lm.items.map(it => ({ x: it.x, z: it.z, r: .9 })));
 const transit = buildTransit(scene, world);
 lm.items.push(...transit.items);
+const chars = buildCharacters(scene, world);
 const center = (() => { const b = world.bounds; return new THREE.Vector3((b.minX + b.maxX) / 2 - 4, 0, (b.minZ + b.maxZ) / 2 + 6); })();
 
 /* ---------- 資料 ---------- */
@@ -66,6 +68,11 @@ const dLabels = world.D.map((d, di) => {
 const pins = lm.items.map(it => {
   const el = document.createElement('div'); el.className = 'pin'; el.textContent = it.name;
   el.addEventListener('click', e => { e.stopPropagation(); showLandmark(it); });
+  labelsEl.appendChild(el); return el;
+});
+const cPins = chars.list.map((c, i) => {
+  const el = document.createElement('div'); el.className = 'pin char'; el.textContent = c.name;
+  el.addEventListener('click', e => { e.stopPropagation(); showCharacter(i); });
   labelsEl.appendChild(el); return el;
 });
 const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.hidden = true; labelsEl.appendChild(bubble);
@@ -183,6 +190,28 @@ function showLandmark(it) {
   flyTo(new THREE.Vector3(it.x, it.y, it.z), 4.2);
   shSub.innerHTML += `<div style="width:100%;margin-top:4px;color:var(--ink)"><b>${esc(it.name)}</b>：${esc(it.desc)}</div>`;
 }
+function charItems(c) { return ROWS.filter(c.match); }
+function showCharacter(i, { move = true } = {}) {
+  const c = chars.poke(i); if (!c) return;
+  clearSelect();
+  const items = charItems(c);
+  shTitle.textContent = c.name;
+  shSub.innerHTML = `<span class="rchip" style="background:var(--accent)">角色</span>${esc(c.role)}・常出現在${esc(c.d)}`;
+  current = () => renderGroups([{ title: `${c.name}關心的政見`, items, empty: '目前資料庫裡還沒有對應這個角色的政見。' }],
+    `<div class="row-actions"><button class="btn" type="button" data-follow="${i}">跟著${esc(c.name)}走</button></div>`);
+  activeCat = '全部'; current(); setSheet(desktop() ? 'open' : 'half');
+  if (items.length) { const r = items[(Math.random() * items.length) | 0]; bubble.textContent = `${c.name}：我最關心「${r.title}」`; }
+  else bubble.textContent = `${c.name}：我關心的事，資料庫還沒收錄`;
+  bubble.hidden = false; bubbleFor = c; bubbleUntil = performance.now() + 5000;
+  if (move) flyTo(c.g.position.clone(), 2.6);
+}
+function showChars() {
+  clearSelect(); shTitle.textContent = '角色'; shSub.textContent = '14 位隆隆，點一位飛過去看他關心的政見';
+  filtersEl.hidden = true; current = null;
+  const h = `<div class="grid chars">` + chars.list.map((c, i) => `<button type="button" data-ch="${i}">${esc(c.name.replace('隆隆', ''))}<small>${charItems(c).length} 條・${esc(c.d.replace('區', ''))}</small></button>`).join('') + '</div>';
+  shBody.innerHTML = h + `<div class="note">角色是方塊人造型，不代表任何真實人物。角色說的話只引用本站資料庫中附有來源的政見。</div>` + NOTE; shBody.scrollTop = 0;
+  setSheet(desktop() ? 'open' : 'full');
+}
 function showCity() {
   clearSelect(); shTitle.textContent = '全市政見'; shSub.textContent = '不限特定區域的承諾';
   current = () => renderGroups([{ title: '全市', items: itemsOf('_city') },
@@ -205,6 +234,8 @@ shBody.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.di) select(+b.dataset.di);
   if (b.dataset.lm) showLandmark(lm.items[+b.dataset.lm]);
+  if (b.dataset.ch) showCharacter(+b.dataset.ch);
+  if (b.dataset.follow) { const c = chars.list[+b.dataset.follow]; follow = c; c.wait = 0; $('bFollow').classList.add('on'); $('bFollow').textContent = '停止跟隨'; if (!desktop()) setSheet('closed'); }
 });
 
 /* ---------- 工具列 ---------- */
@@ -212,6 +243,7 @@ $('bAll').onclick = () => { clearSelect(); flyTo(center, fitDist()); };
 $('bCore').onclick = () => flyTo(new THREE.Vector3(-25.5, .3, 24), 12);
 $('bList').onclick = showList;
 $('bCity').onclick = showCity;
+$('bChars').onclick = showChars;
 let night = false;
 $('bNight').onclick = () => {
   night = !night; $('bNight').classList.toggle('on', night); $('bNight').setAttribute('aria-pressed', night); $('bNight').textContent = night ? '白天' : '夜晚';
@@ -225,14 +257,15 @@ q.addEventListener('input', () => {
   const s = q.value.trim(); if (!s) { sugg.hidden = true; return; }
   const ds = world.D.map((d, di) => ({ t: d.name, di })).filter(x => x.t.includes(s));
   const ls = lm.items.map((it, n) => ({ t: it.name + '（' + it.d + '）', n })).filter(x => x.t.includes(s));
+  const cs = chars.list.map((c, ci) => ({ t: '角色：' + c.name, ci })).filter(x => x.t.includes(s));
   const ps = ROWS.filter(r => r.title.includes(s) || (r.body || '').includes(s)).slice(0, 6).map(r => ({ t: '政見：' + r.title, r }));
-  const all = [...ds, ...ls, ...ps].slice(0, 10);
+  const all = [...ds, ...cs, ...ls, ...ps].slice(0, 10);
   sugg.innerHTML = all.length ? all.map((x, k) => `<button type="button" data-k="${k}">${esc(x.t)}</button>`).join('') : '<button type="button" disabled>找不到符合的結果</button>';
   sugg.hidden = false;
   sugg.onclick = e => {
     const b = e.target.closest('button[data-k]'); if (!b) return; const x = all[+b.dataset.k];
     sugg.hidden = true; q.value = ''; q.blur();
-    if (x.di != null) select(x.di); else if (x.n != null) showLandmark(lm.items[x.n]);
+    if (x.di != null) select(x.di); else if (x.ci != null) showCharacter(x.ci); else if (x.n != null) showLandmark(lm.items[x.n]);
     else { const d = (x.r.districts || [])[0]; const di = world.D.findIndex(v => v.name === d); if (di >= 0) select(di); else showCity(); }
   };
 });
@@ -269,6 +302,7 @@ renderer.domElement.addEventListener('pointercancel', e => { active.delete(e.poi
 function tapAt(x, y) {
   ptr.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera);
   $('hint').style.opacity = 0;
+  { const hc = ray.intersectObjects(chars.meshes, false)[0]; if (hc) { showCharacter(hc.object.userData.char, { move: false }); return; } }
   if (people) { const hp = ray.intersectObjects(people.meshes, false)[0]; if (hp) { talk(hp.object.userData.person); return; } }
   const hl = ray.intersectObject(lm.mesh, false)[0];
   const ht = ray.intersectObject(world.mesh, false)[0];
@@ -385,6 +419,7 @@ function tick() {
   Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: .1, far: r * 4 }); sun.shadow.camera.updateProjectionMatrix();
   world.update(dt, t); lm.applyLift(world.liftOf);
   if (!reduce) { lm.update(t); transit.update(dt); }
+  chars.update(dt, t, reduce);
   transit.applyLift();
   people && people.update(dt, t, reduce);
   renderer.render(scene, camera);
@@ -400,6 +435,13 @@ function tick() {
     const el = pins[n];
     v.set(it.x, it.y + world.liftOf(it.di) + it.top * .05 + .08, it.z).project(camera);
     const show = v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 && ((dist < 16 && Math.hypot(it.x - controls.target.x, it.z - controls.target.z) < dist * 1.2) || (it.di === selected && dist < 40));
+    el.hidden = !show; if (!show) return;
+    el.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; el.style.top = ((1 - v.y) / 2 * innerHeight) + 'px';
+  });
+  chars.list.forEach((c, n) => {
+    const el = cPins[n], g = c.g.position;
+    v.set(g.x, g.y + .42, g.z).project(camera);
+    const show = v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 && dist < 30 && bubbleFor !== c;
     el.hidden = !show; if (!show) return;
     el.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; el.style.top = ((1 - v.y) / 2 * innerHeight) + 'px';
   });

@@ -34,4 +34,4 @@ export async function loadPolicies() {
 export const REGION_KEYS = {
   _north: '北高雄', _east: '東高雄', _core: '市中心', _port: '港區・南高雄', _city: '全市',
 };
-export const CATEGORIES = ['交通', '產業', '建設', '生活', '育兒', '長照', '醫療', '防災', '觀光', '農業', '文化', '教育'];
+export const CATEGORIES = ['交通', '產業', '建設', '生活', '育兒', '長照', '醫療', '防災', '觀光', '農業', '文化', '教育', '青年', '寵物', '運動'];
