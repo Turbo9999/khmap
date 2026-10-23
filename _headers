@@ -1,4 +1,10 @@
-/data/*
-  Cache-Control: public, max-age=300
 /js/*
-  Cache-Control: public, max-age=300
+  Cache-Control: no-cache
+/css/*
+  Cache-Control: no-cache
+/data/*
+  Cache-Control: no-cache
+/config.js
+  Cache-Control: no-cache
+/
+  Cache-Control: no-cache
