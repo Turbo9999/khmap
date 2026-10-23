@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>高雄政見方塊地圖</title>
-<meta name="description" content="非官方整理：用方塊立體地圖瀏覽賴瑞隆在高雄 38 區提出的政見，每條附官網或新聞來源。">
+<title>隆捲風政策島</title>
+<meta name="description" content="隆捲風政策島（非官方）：用方塊立體地圖逛高雄 38 區，看賴瑞隆在各區提出的政見，每條附官網或新聞來源。">
+<meta property="og:title" content="隆捲風政策島（非官方）">
+<meta property="og:description" content="用方塊立體地圖逛高雄 38 區，看賴瑞隆在各區提出的政見，每條附來源。">
+<meta property="og:type" content="website">
 <meta name="theme-color" content="#bfe3f2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,9 +21,13 @@
 
 <div class="top">
   <div class="brand">
-    <h1>高雄政見方塊地圖 <span class="badge">非官方</span></h1>
+    <div class="brand-row">
+      <h1>隆捲風政策島 <span class="badge">非官方</span></h1>
+      <button class="menu" id="menu" type="button" aria-expanded="false" aria-controls="panel">選單 <span class="caret" aria-hidden="true">▾</span></button>
+    </div>
     <p>點一區看賴瑞隆在當地的政見；點小人聽他說一條。資料整理自競選官網與新聞，每條附來源。</p>
   </div>
+  <div class="panel" id="panel">
   <div class="tools">
     <button class="btn" id="bAll" type="button">全市</button>
     <button class="btn" id="bCore" type="button">市中心</button>
@@ -35,6 +42,7 @@
     <div class="sugg" id="sugg" hidden></div>
   </div>
   <div class="legend" id="legend"></div>
+  </div>
 </div>
 
 <div class="zoom">
@@ -44,7 +52,7 @@
   <button class="btn" id="zmode" type="button" aria-label="目前拖曳會移動地圖，點一下改成旋轉視角">移</button>
 </div>
 <div class="hint" id="hint">拖曳移動・雙指縮放、旋轉、傾斜</div>
-<div class="credit">資料來源見各條・<a href="admin.html">管理</a>・Powered by <a href="mailto:pkddqq@gmail.com">Turbo Labs</a><span class="v">v1023.008</span></div>
+<div class="credit">資料來源見各條・<a href="admin.html">管理</a>・Powered by <a href="mailto:pkddqq@gmail.com">Turbo Labs</a><span class="v">v1024.001</span></div>
 
 <section id="sheet" class="closed" aria-live="polite">
   <div class="grab" id="grab"><span></span></div>

@@ -143,3 +143,16 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .top{right:460px}
 }
 @media (prefers-reduced-motion: reduce){#sheet,.btn{transition:none}}
+
+/* 選單折疊：所有按鈕收在「選單」裡 */
+.brand-row{display:flex;align-items:center;gap:10px}
+.brand-row h1{flex:1;min-width:0}
+.menu{flex:none;font:inherit;font-size:13px;font-weight:800;color:var(--paper);background:var(--ink);border:2px solid var(--ink);padding:5px 10px;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.menu .caret{display:inline-block;transition:transform .2s}
+.menu[aria-expanded="true"] .caret{transform:rotate(180deg)}
+.panel{display:flex;flex-direction:column;gap:8px;align-items:flex-start;pointer-events:none;max-width:100%}
+.panel > *{pointer-events:auto}
+html.folded .panel,html.folded .zoom{display:none}
+html.folded .brand p{display:none}
+@media (max-width:899px){ .panel{gap:6px;align-items:stretch;width:100%} }
+@media (prefers-reduced-motion: reduce){ .menu .caret{transition:none} }

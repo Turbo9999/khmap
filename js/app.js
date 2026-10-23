@@ -400,6 +400,18 @@ function tick() {
 function setVH() { document.documentElement.style.setProperty('--vh', (window.visualViewport ? visualViewport.height : innerHeight) + 'px'); }
 setVH(); (window.visualViewport || window).addEventListener('resize', setVH);
 
+/* ---------- 選單折疊 ---------- */
+const root = document.documentElement, menuBtn = $('menu');
+function setFolded(f) {
+  root.classList.toggle('folded', f); menuBtn.setAttribute('aria-expanded', String(!f));
+  try { localStorage.setItem('khmap-folded', f ? '1' : '0'); } catch (e) {}
+}
+let savedFold = null; try { savedFold = localStorage.getItem('khmap-folded'); } catch (e) {}
+setFolded(savedFold == null ? true : savedFold === '1');
+menuBtn.onclick = () => setFolded(!root.classList.contains('folded'));
+// 手機上按了選單裡的功能就自動收起，讓出地圖
+$('panel').addEventListener('click', e => { if (!desktop() && e.target.closest('.tools .btn')) setFolded(true); });
+
 /* ---------- 啟動 ---------- */
 legend();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', legend);
