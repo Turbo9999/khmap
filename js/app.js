@@ -308,8 +308,6 @@ function orbit(dAz, dPol) {
   sp.theta += dAz; sp.phi = Math.min(controls.maxPolarAngle, Math.max(.05, sp.phi + dPol));
   fly = { t0: performance.now() - (reduce ? 350 : 0), dur: 350, fT: controls.target.clone(), tT: controls.target.clone(), fP: camera.position.clone(), tP: controls.target.clone().add(new THREE.Vector3().setFromSpherical(sp)) };
 }
-$('rl').onclick = () => orbit(Math.PI / 6, 0); $('rr').onclick = () => orbit(-Math.PI / 6, 0);
-$('tu').onclick = () => orbit(0, .22); $('td').onclick = () => orbit(0, -.22);
 // 指北針：點一下轉回正北
 $('compass').onclick = () => { const off = camera.position.clone().sub(controls.target); const sp = new THREE.Spherical().setFromVector3(off); orbit(-sp.theta, 0); };
 addEventListener('keydown', e => {

@@ -72,6 +72,24 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .needle{display:inline-block;font-family:var(--f-pixel);font-size:11px;color:var(--accent);transition:transform .1s linear}
 @media (min-width:900px){.zoom .pad{margin-left:0}.zoom{flex-direction:row;align-items:flex-end;right:auto;left:max(16px,env(safe-area-inset-left,0px));top:auto;bottom:48px;transform:none}}
 
+/* 觸控裝置：介面精簡 */
+@media (pointer: coarse){ #zin,#zout{display:none} }
+@media (max-width:899px){
+  .top{gap:6px;padding-block:8px 0}
+  .brand{padding:6px 10px;border-width:2px;box-shadow:0 2px 0 rgba(29,42,51,.25)}
+  .brand h1{font-size:16px}
+  .brand p{display:none}
+  .badge{font-size:10px;margin:0 0 0 4px;vertical-align:2px}
+  .tools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;width:calc(100% + 24px);margin-left:-12px;padding:2px 12px 5px}
+  .tools::-webkit-scrollbar{display:none}
+  .tools .btn{flex:none;font-size:13px;padding:5px 10px;border-width:2px;box-shadow:0 2px 0 var(--ink)}
+  .search input{font-size:14px;padding:6px 9px;border-width:2px;width:min(220px,60vw)}
+  .legend{display:none}
+  .zoom{top:auto;bottom:calc(40px + env(safe-area-inset-bottom,0px));transform:none;gap:6px}
+  .zoom .btn{width:38px;height:38px;font-size:16px;border-width:2px;box-shadow:0 2px 0 var(--ink)}
+  .credit{font-size:10px;padding:2px 6px}
+}
+
 /* 面板：手機抽屜 */
 #sheet{position:fixed;z-index:6;left:0;right:0;bottom:0;height:min(78vh,720px);background:var(--paper);border-top:3px solid var(--ink);
   box-shadow:0 -6px 24px rgba(0,0,0,.18);display:flex;flex-direction:column;transform:translateY(calc(100% - var(--peek,0px)));
