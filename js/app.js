@@ -25,7 +25,7 @@ scene.background = new THREE.Color(DAY.sky);
 scene.fog = new THREE.Fog(DAY.fog, 160, 420);
 const camera = new THREE.PerspectiveCamera(36, 1, .01, 1200);
 const controls = new OrbitControls(camera, renderer.domElement);
-Object.assign(controls, { enableDamping: true, dampingFactor: .12, maxPolarAngle: Math.PI * .47, minDistance: .12, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 3.2, zoomToCursor: true });
+Object.assign(controls, { enableDamping: true, dampingFactor: .12, maxPolarAngle: Math.PI * .495, minPolarAngle: 0, rotateSpeed: .9, minDistance: .12, maxDistance: 260, screenSpacePanning: false, zoomSpeed: 3.2, zoomToCursor: true });
 // 像地圖一樣：單指／左鍵拖曳＝平移；雙指＝縮放與旋轉；右鍵／Ctrl＋拖曳＝旋轉
 controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
@@ -276,19 +276,47 @@ function startFollow() {
 }
 function stopFollow() { follow = null; $('bFollow').classList.remove('on'); $('bFollow').textContent = '跟小人走'; }
 $('bFollow').onclick = () => follow ? stopFollow() : startFollow();
-$('bStreet').onclick = () => { stopFollow(); zoomBy(1.8 / Math.max(1.8, camera.position.distanceTo(controls.target))); };
+$('bStreet').onclick = () => { stopFollow(); zoomBy(1.8 / Math.max(1.8, camera.position.distanceTo(controls.target)), null, true); };
 // 雙擊／雙點兩下：往那個位置放大一大步
-function zoomBy(factor, at) {
+let useTilt = false;
+function zoomBy(factor, at, tilt = false) {
+  useTilt = tilt;
   let target = controls.target.clone();
   if (at) { ptr.set(at[0] / innerWidth * 2 - 1, -(at[1] / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera); const h = ray.intersectObject(world.mesh, false)[0]; if (h) target = h.point.clone(); }
   const dist = Math.min(controls.maxDistance, Math.max(controls.minDistance, camera.position.distanceTo(controls.target) * factor));
-  const dir = tiltDir(dist);
+  const dir = useTilt ? tiltDir(dist) : camera.position.clone().sub(controls.target).normalize();
   fly = { t0: performance.now() - (reduce ? 400 : 0), dur: 400, fT: controls.target.clone(), tT: target, fP: camera.position.clone(), tP: target.clone().add(dir.multiplyScalar(dist)) };
 }
 renderer.domElement.addEventListener('dblclick', e => zoomBy(.4, [e.clientX, e.clientY]));
 let lastTap = 0;
 renderer.domElement.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') return; const now = performance.now(); if (now - lastTap < 300) { zoomBy(.4, [e.clientX, e.clientY]); lastTap = 0; } else lastTap = now; });
 $('zin').onclick = () => zoomBy(.45); $('zout').onclick = () => zoomBy(2.2);
+// 拖曳模式：移動地圖 ↔ 轉視角
+let dragRotate = false;
+function setDragMode(rot) {
+  dragRotate = rot;
+  controls.touches.ONE = rot ? THREE.TOUCH.ROTATE : THREE.TOUCH.PAN;
+  controls.mouseButtons.LEFT = rot ? THREE.MOUSE.ROTATE : THREE.MOUSE.PAN;
+  controls.mouseButtons.RIGHT = rot ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE;
+  $('zmode').classList.toggle('on', rot); $('zmode').textContent = rot ? '轉' : '移';
+  $('zmode').setAttribute('aria-label', rot ? '目前拖曳會旋轉視角，點一下改成移動地圖' : '目前拖曳會移動地圖，點一下改成旋轉視角');
+}
+$('zmode').onclick = () => setDragMode(!dragRotate);
+// 旋轉與傾斜（每按一次）
+function orbit(dAz, dPol) {
+  const off = camera.position.clone().sub(controls.target); const sp = new THREE.Spherical().setFromVector3(off);
+  sp.theta += dAz; sp.phi = Math.min(controls.maxPolarAngle, Math.max(.05, sp.phi + dPol));
+  fly = { t0: performance.now() - (reduce ? 350 : 0), dur: 350, fT: controls.target.clone(), tT: controls.target.clone(), fP: camera.position.clone(), tP: controls.target.clone().add(new THREE.Vector3().setFromSpherical(sp)) };
+}
+$('rl').onclick = () => orbit(Math.PI / 6, 0); $('rr').onclick = () => orbit(-Math.PI / 6, 0);
+$('tu').onclick = () => orbit(0, .22); $('td').onclick = () => orbit(0, -.22);
+// 指北針：點一下轉回正北
+$('compass').onclick = () => { const off = camera.position.clone().sub(controls.target); const sp = new THREE.Spherical().setFromVector3(off); orbit(-sp.theta, 0); };
+addEventListener('keydown', e => {
+  if (e.target.closest('input,textarea')) return;
+  const k = { ArrowLeft: [Math.PI / 12, 0], ArrowRight: [-Math.PI / 12, 0], ArrowUp: [0, .12], ArrowDown: [0, -.12] }[e.key];
+  if (k) { e.preventDefault(); orbit(...k); } else if (e.key === '+' || e.key === '=') zoomBy(.6); else if (e.key === '-') zoomBy(1.6);
+});
 
 function talk(i) {
   const p = people.poke(i); if (!p) return;
@@ -314,7 +342,7 @@ function tick() {
     camera.position.lerp(tgt.clone().add(back.multiplyScalar(-.55)).add(new THREE.Vector3(0, .22, 0)), Math.min(1, dt * 3));
   }
   controls.update();
-  if (!fly && !follow) autoTilt(); else lastDist = camera.position.distanceTo(controls.target);
+  { const off = camera.position.clone().sub(controls.target); $('needle').style.transform = `rotate(${-Math.atan2(off.x, off.z)}rad)`; }
   // 鏡頭不鑽進地面
   { const gy = world.topAt(camera.position.x, camera.position.z) + .1; if (camera.position.y < gy) camera.position.y = gy; }
   // 陰影跟著鏡頭目標走，近看比較銳利
