@@ -42,8 +42,8 @@ export const CHARACTERS = [
   { id: 'opera', name: '歌仔戲隆隆', role: '穿傳統戲服，代表在地傳統文化與藝文。', at: [22.946, 120.477], d: '內門區',
     look: { shirt: '#c0392b', pants: '#c0392b', operaFace: true, headdress: true, robe: true },
     match: r => r.category === '文化' || /藝陣|傳統|歌仔戲|宗教/.test(text(r)) },
-  { id: 'fan', name: '樂迷隆隆', role: '戴耳機的潮流樂迷，呼應高雄的演唱會經濟。', at: [22.6205, 120.2825], d: '鹽埕區',
-    look: { shirt: '#8a5bb5', pants: '#1d1d1d', headphones: true, cap: true },
+  { id: 'fan', name: '樂迷隆隆', role: '亮粉紅假髮、耳罩式耳機、墨鏡加潮流穿搭，揮著發光應援棒，呼應高雄的演唱會經濟。', at: [22.6205, 120.2825], d: '鹽埕區',
+    look: { shirt: '#111111', pants: '#2b2b2b', hair: '#ff3fa4', wig: '#ff3fa4', headphones: true, sunglasses: true, streetwear: true, lightstick: '#ff5ec8' },
     match: r => /演唱會|大港|巨蛋|舞台|盛事|劇場/.test(text(r)) },
   { id: 'athlete', name: '運動選手隆隆', role: '代表體育與全民運動。', at: [22.701, 120.296], d: '左營區',
     look: { shirt: '#e8e8e8', pants: '#c0392b', headband: '#c0392b', number: true }, speed: .38,
@@ -84,6 +84,7 @@ function build(look) {
   armL.position.set(-P * 1.5, P * 6, 0); armR.position.set(P * 1.5, P * 6, 0);
   legL.position.set(-P * .5, P * 3, 0); legR.position.set(P * .5, P * 3, 0);
   rider.add(body, head, armL, armR, legL, legR); g.add(rider);
+  const extra = {};
   const on = (parent, m, x, y, z) => { m.position.set(P * x, P * y, P * z); parent.add(m); return m; };
   if (look.inner) on(rider, box(.8, 2.6, .1, look.inner), 0, 4.6, .52);
   if (look.tie) on(rider, box(.35, 2, .1, look.tie), 0, 4.8, .55);
@@ -96,6 +97,25 @@ function build(look) {
   if (look.helmet) { on(rider, box(2.4, 2.2, 2.4, look.helmet), 0, 7.4, -.1); on(rider, box(2, .9, .2, '#1d2a33'), 0, 7, 1.15); }
   if (look.strawhat) { on(rider, box(4, .3, 4, '#d9b36a'), 0, 8.1, 0); on(rider, box(2, .7, 2, '#c9a35a'), 0, 8.5, 0); }
   if (look.headphones) { on(rider, box(.6, 1.2, 1.2, '#111'), -1.2, 7, 0); on(rider, box(.6, 1.2, 1.2, '#111'), 1.2, 7, 0); on(rider, box(2.6, .35, .6, '#e85d2a'), 0, 8.2, 0); }
+  if (look.wig) {   // 蓬鬆亮粉紅假髮
+    on(rider, box(2.8, 1.4, 2.8, look.wig), 0, 8.3, -.1); on(rider, box(2.4, .8, 2.4, look.wig), 0, 9.3, -.1);
+    on(rider, box(.5, 2.4, 2.6, look.wig), -1.35, 7, -.3); on(rider, box(.5, 2.4, 2.6, look.wig), 1.35, 7, -.3); on(rider, box(2.8, 2.6, .5, look.wig), 0, 6.9, -1.3);
+    on(rider, box(.8, .8, .8, '#ff8cc8'), -.8, 9.8, .2); on(rider, box(.8, .8, .8, '#ff8cc8'), .7, 9.9, -.5);
+  }
+  if (look.streetwear) {   // 潮流穿搭：大學外套、亮色拉鍊、球鞋
+    on(rider, box(2.1, .4, 1.1, '#ff3fa4'), 0, 3.15, 0); on(rider, box(.25, 3, .1, '#f2e94e'), 0, 4.5, .55);
+    on(rider, box(1, .5, .1, '#f2e94e'), .5, 5.2, .56);
+    [armL, armR].forEach(a => { const c = box(1, .4, 1, '#ff3fa4'); c.position.y = -P * 2.7; a.add(c); });
+    [legL, legR].forEach(l => { const sh = box(1.1, .6, 1.5, '#f4f4f4'); sh.position.set(0, -P * 2.8, P * .2); l.add(sh); });
+  }
+  if (look.lightstick) {   // 會發光的應援棒
+    const grip = box(.35, 1.4, .35, '#222'); grip.position.y = -P * 3.3; armR.add(grip);
+    const glowM = new THREE.MeshBasicMaterial({ color: look.lightstick });
+    const tip = new THREE.Mesh(new THREE.BoxGeometry(P * .7, P * 2.2, P * .7), glowM); tip.position.y = -P * 5; armR.add(tip);
+    const halo = new THREE.Mesh(new THREE.BoxGeometry(P * 1.3, P * 2.8, P * 1.3), new THREE.MeshBasicMaterial({ color: look.lightstick, transparent: true, opacity: .35, depthWrite: false })); halo.position.y = -P * 5; armR.add(halo);
+    const light = new THREE.PointLight(look.lightstick, .6, .6); light.position.y = -P * 5; armR.add(light);
+    extra.stick = { glowM, halo, light };
+  }
   if (look.cap) { on(rider, box(2.2, .6, 2.2, '#f2c14e'), 0, 8.2, 0); on(rider, box(1.6, .2, 1.1, '#f2c14e'), 0, 7.95, -1.4); }
   if (look.headband) on(rider, box(2.1, .4, 2.1, look.headband), 0, 7.6, 0);
   if (look.beard) on(rider, box(2.2, .6, 2.2, '#f2f2f2'), 0, 8.2, 0);
@@ -103,7 +123,6 @@ function build(look) {
   if (look.robe) on(rider, box(2.6, 3.2, 1.6, '#c0392b'), 0, 1.7, 0);
   if (look.briefcase) { const b = box(.5, 1.1, 1.4, '#6b4a2b'); b.position.y = -P * 3.3; armR.add(b); }
   if (look.cane) { const b = box(.25, 4, .25, '#5a4636'); b.position.set(0, -P * 3.6, P * .6); armR.add(b); }
-  const extra = {};
   if (look.stall) { const s = new THREE.Group(); s.add(on(s, box(4, 2, 2, '#a8754b'), 0, 1, 0)); on(s, box(4.2, .2, 2.2, '#3c9a8f'), 0, 4.2, 0); on(s, box(.3, 2.2, .3, '#888'), -1.9, 3.1, 0); on(s, box(.3, 2.2, .3, '#888'), 1.9, 3.1, 0);
     ['#6aa84f', '#e85d2a', '#f2c14e', '#d94f70'].forEach((c, k) => on(s, box(.8, .6, .8, c), -1.4 + k * .95, 2.3, 0)); extra.stall = s; }
   if (look.stroller) { const s = new THREE.Group(); on(s, box(1.8, 1.4, 2.4, '#4a74b8'), 0, 2.2, 0); on(s, box(1.9, 1.4, .3, '#2f5590'), 0, 3.4, -1.1); on(s, box(.9, .9, .9, '#efc6a0'), 0, 3.2, .2);
@@ -152,6 +171,13 @@ export function buildCharacters(scene, world) {
       c.armL.rotation.x = c.look.stroller ? -1.2 : swing; c.armR.rotation.x = c.look.stroller ? -1.2 : (c.look.cane ? .3 : -swing);
       c.legL.rotation.x = -swing; c.legR.rotation.x = swing;
       if (c.look.headphones && !reduce) c.head.rotation.z = Math.sin(t * 6) * .12;   // 跟著音樂搖
+      if (c.extra.stick) {   // 停下來時舉起應援棒揮舞，顏色輪流變
+        const st = c.extra.stick, k = reduce ? 0 : t;
+        if (c.wait > 0) { c.armR.rotation.x = -2.8 + Math.sin(k * 7) * .35; c.armR.rotation.z = Math.sin(k * 3.5) * .3; }
+        const col = new THREE.Color().setHSL((.9 + Math.sin(k * .8) * .08 + 1) % 1, 1, .62);
+        st.glowM.color.copy(col); st.halo.material.color.copy(col); st.light.color.copy(col);
+        st.halo.material.opacity = .25 + .15 * Math.sin(k * 9);
+      }
       if (c.look.robe && !reduce && c.wait > 0) { c.armL.rotation.z = Math.sin(t * 2) * .5 - .4; c.armR.rotation.z = -Math.sin(t * 2) * .5 + .4; }
       if (c.hop > 0) c.hop -= dt;
       const hop = c.hop > 0 ? Math.sin((1 - c.hop / .6) * Math.PI) * P * 6 : 0;
