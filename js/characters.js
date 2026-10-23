@@ -48,6 +48,10 @@ export const CHARACTERS = [
   { id: 'athlete', name: '運動選手隆隆', role: '代表體育與全民運動。', at: [22.701, 120.296], d: '左營區',
     look: { shirt: '#e8e8e8', pants: '#c0392b', headband: '#c0392b', number: true }, speed: .38,
     match: r => r.category === '運動' || /運動|體操|健身|球場/.test(text(r)) },
+  // 旗山路人：沒有名字、不說話、不能點，只是背景
+  { id: 'qishan-walker', name: '', silent: true, role: '', at: [22.8885, 120.4825], d: '旗山區',
+    look: { shirt: '#8f8a80', pants: '#3d3d3d', hair: '#111111', shortHair: true, slim: true, backpack: '#e6d6a8' },
+    match: () => false },
 ];
 
 function face(look) {
@@ -86,6 +90,8 @@ function build(look) {
   rider.add(body, head, armL, armR, legL, legR); g.add(rider);
   const extra = {};
   const on = (parent, m, x, y, z) => { m.position.set(P * x, P * y, P * z); parent.add(m); return m; };
+  if (look.shortHair) { on(rider, box(2.2, .5, 2.2, look.hair), 0, 8.15, 0); on(rider, box(2.2, 1.3, .35, look.hair), 0, 7.4, -1.05); on(rider, box(.3, 1, 2.1, look.hair), -1.05, 7.5, -.05); on(rider, box(.3, 1, 2.1, look.hair), 1.05, 7.5, -.05); }
+  if (look.slim) { body.scale.x = .85; armL.position.x = -P * 1.35; armR.position.x = P * 1.35; }
   if (look.inner) on(rider, box(.8, 2.6, .1, look.inner), 0, 4.6, .52);
   if (look.tie) on(rider, box(.35, 2, .1, look.tie), 0, 4.8, .55);
   if (look.vest) { on(rider, box(2.06, .35, 1.06, '#e8eef2'), 0, 4.2, 0); on(rider, box(2.06, .35, 1.06, '#e8eef2'), 0, 5.2, 0); }

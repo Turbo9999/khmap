@@ -211,7 +211,7 @@ function showCharacter(i, { move = true } = {}) {
 function showChars() {
   clearSelect(); shTitle.textContent = '角色'; shSub.textContent = '14 位隆隆，點一位飛過去看他關心的政見';
   filtersEl.hidden = true; current = null;
-  const h = `<div class="grid chars">` + chars.list.map((c, i) => `<button type="button" data-ch="${i}">${esc(c.name.replace('隆隆', ''))}<small>${charItems(c).length} 條・${esc(c.d.replace('區', ''))}</small></button>`).join('') + '</div>';
+  const h = `<div class="grid chars">` + chars.list.map((c, i) => c.silent ? '' : `<button type="button" data-ch="${i}">${esc(c.name.replace('隆隆', ''))}<small>${charItems(c).length} 條・${esc(c.d.replace('區', ''))}</small></button>`).join('') + '</div>';
   shBody.innerHTML = h + `<div class="note">角色是方塊人造型，不代表任何真實人物。角色說的話只引用本站資料庫中附有來源的政見。</div>` + NOTE; shBody.scrollTop = 0;
   setSheet(desktop() ? 'open' : 'full');
 }
@@ -260,7 +260,7 @@ q.addEventListener('input', () => {
   const s = q.value.trim(); if (!s) { sugg.hidden = true; return; }
   const ds = world.D.map((d, di) => ({ t: d.name, di })).filter(x => x.t.includes(s));
   const ls = lm.items.map((it, n) => ({ t: it.name + '（' + it.d + '）', n })).filter(x => x.t.includes(s));
-  const cs = chars.list.map((c, ci) => ({ t: '角色：' + c.name, ci })).filter(x => x.t.includes(s));
+  const cs = chars.list.map((c, ci) => ({ t: '角色：' + c.name, ci, silent: c.silent })).filter(x => !x.silent && x.t.includes(s));
   const ps = ROWS.filter(r => r.title.includes(s) || (r.body || '').includes(s)).slice(0, 6).map(r => ({ t: '政見：' + r.title, r }));
   const all = [...ds, ...cs, ...ls, ...ps].slice(0, 10);
   sugg.innerHTML = all.length ? all.map((x, k) => `<button type="button" data-k="${k}">${esc(x.t)}</button>`).join('') : '<button type="button" disabled>找不到符合的結果</button>';
@@ -305,7 +305,7 @@ renderer.domElement.addEventListener('pointercancel', e => { active.delete(e.poi
 function tapAt(x, y) {
   ptr.set(x / innerWidth * 2 - 1, -(y / innerHeight) * 2 + 1); ray.setFromCamera(ptr, camera);
   $('hint').style.opacity = 0;
-  { const hc = ray.intersectObjects(chars.meshes, false)[0]; if (hc) { showCharacter(hc.object.userData.char, { move: false }); return; } }
+  { const hc = ray.intersectObjects(chars.meshes, false)[0]; if (hc) { const c = chars.list[hc.object.userData.char]; if (!c.silent) showCharacter(hc.object.userData.char, { move: false }); return; } }
   if (people) { const hp = ray.intersectObjects(people.meshes, false)[0]; if (hp) { talk(hp.object.userData.person); return; } }
   const hl = ray.intersectObject(lm.mesh, false)[0];
   const ht = ray.intersectObject(world.mesh, false)[0];
@@ -444,7 +444,7 @@ function tick() {
   chars.list.forEach((c, n) => {
     const el = cPins[n], g = c.g.position;
     v.set(g.x, g.y + .42, g.z).project(camera);
-    const show = v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 && dist < 30 && bubbleFor !== c;
+    const show = !c.silent && v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 && dist < 30 && bubbleFor !== c;
     el.hidden = !show; if (!show) return;
     el.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; el.style.top = ((1 - v.y) / 2 * innerHeight) + 'px';
   });
