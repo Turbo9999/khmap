@@ -1,6 +1,7 @@
 // 固定角色「○○隆隆」：一般方塊人外型（不模仿真人），各自代表一種市民身分。
 // 角色只說「我關心什麼」，內容一律從政見資料庫挑有來源的條目，不另外編台詞。
 import * as THREE from 'three';
+import { ROUND, sizedBox, cuteFace, tone } from './style.js';
 
 const P = 0.034 * 1.25;
 const text = r => (r.title || '') + (r.body || '');
@@ -73,10 +74,11 @@ function face(look) {
 
 function build(look) {
   const L = c => new THREE.MeshLambertMaterial({ color: c });
-  const box = (w, h, d, c) => { const m = new THREE.Mesh(new THREE.BoxGeometry(P * w, P * h, P * d), L(c)); m.castShadow = true; return m; };
+  const box = (w, h, d, c) => { const m = new THREE.Mesh(sizedBox(P * w, P * h, P * d), L(c)); m.castShadow = true; return m; };
   const f = face(look);
+  if (ROUND) f.tex = cuteFace({ skin: f.skin, hair: f.hair, glasses: look.glasses, sunglasses: look.sunglasses, beard: look.beard, opera: look.operaFace, bangs: !look.helmet });
   const skinM = L(f.skin), hairM = L(f.hair);
-  const head = new THREE.Mesh(new THREE.BoxGeometry(P * 2, P * 2, P * 2), [skinM, skinM, hairM, skinM, new THREE.MeshLambertMaterial({ map: f.tex }), hairM]);
+  const head = new THREE.Mesh(sizedBox(P * (ROUND ? 2.4 : 2), P * (ROUND ? 2.4 : 2), P * (ROUND ? 2.4 : 2), .42), [skinM, skinM, hairM, skinM, new THREE.MeshLambertMaterial({ map: f.tex }), hairM]);
   head.castShadow = true;
   const shirt = look.shirt, pants = look.pants;
   const body = box(2, 3, 1, shirt);

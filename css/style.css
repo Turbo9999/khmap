@@ -90,7 +90,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .badge{font-size:10px;margin:0 0 0 4px;vertical-align:2px}
   .top{align-items:stretch}
   .brand{align-self:flex-start;max-width:100%}
-  .tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%}
+  .tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;width:100%}
   .tools .btn{min-width:0;font-size:12.5px;padding:6px 2px;border-width:2px;box-shadow:0 2px 0 var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .search{width:100%}
   .search input{font-size:16px;padding:6px 9px;border-width:2px;width:100%}
@@ -167,3 +167,42 @@ html.folded .brand p{display:none}
 .pin.char::after{border-top-color:var(--accent)}
 .row-actions{margin-top:14px;display:flex;gap:8px}
 .grid.chars button{font-size:13.5px}
+
+/* ── 圓潤風（動森風）：圓角、奶油色、柔和陰影、圓體標題 ── */
+html.round{--paper:#fffaf0;--paper2:#f5eedb;--ink:#5a4635;--muted:#8a7664;--line:#e8dcc4;--accent:#f08a5d;--sky:#c9eefc;
+  --shadow:0 4px 0 rgba(90,70,53,.12),0 10px 24px rgba(90,70,53,.12);--f-round:"Huninn","jf open 粉圓","Microsoft JhengHei","微軟正黑體",sans-serif}
+@media (prefers-color-scheme: dark){html.round:not([data-theme="light"]){--paper:#2c2620;--paper2:#3a3229;--ink:#f6ecdc;--muted:#c9b8a2;--line:#4a4035;--sky:#1b2347}}
+html.round[data-theme="dark"]{--paper:#2c2620;--paper2:#3a3229;--ink:#f6ecdc;--muted:#c9b8a2;--line:#4a4035;--sky:#1b2347}
+html.round .brand{border:0;border-radius:22px;box-shadow:var(--shadow)}
+html.round .brand h1,html.round .sh-head h2,html.round .card h3{font-family:var(--f-round);font-weight:400;letter-spacing:.03em}
+html.round .badge{border-radius:999px;padding:2px 8px}
+html.round .menu{border:0;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+html.round .btn{border:0;border-radius:999px;background:var(--paper);box-shadow:0 3px 0 rgba(90,70,53,.18),0 6px 14px rgba(90,70,53,.1);font-weight:700}
+html.round .btn:active{box-shadow:0 0 0 rgba(0,0,0,0)}
+html.round .btn.on{background:var(--accent);color:#fff}
+html.round .search input{border:0;border-radius:999px;box-shadow:var(--shadow);padding-left:14px}
+html.round .sugg{border:0;border-radius:16px;margin-top:4px;box-shadow:var(--shadow);overflow:hidden}
+html.round .legend{border:0;border-radius:999px;box-shadow:var(--shadow)}
+html.round .lbl{border:0;border-radius:999px;padding:5px 9px;box-shadow:0 2px 0 rgba(90,70,53,.2),0 4px 10px rgba(90,70,53,.12);font-family:var(--f-round);font-weight:400;font-size:12.5px}
+html.round .lbl b{font-family:var(--f-round);font-size:11px;background:var(--accent);color:#fff;border-radius:999px;padding:1px 5px;margin-left:5px}
+html.round .lbl.sel{background:var(--accent);color:#fff}
+html.round .lbl.sel b{background:#fff;color:var(--accent)}
+html.round .pin{border-radius:999px;padding:3px 9px;background:rgba(90,70,53,.82)}
+html.round .pin.char{background:var(--accent)}
+html.round .bubble{border:0;border-radius:16px;box-shadow:var(--shadow);font-family:var(--f-round);font-size:13px}
+html.round #sheet{border:0;border-radius:24px 24px 0 0;box-shadow:0 -6px 30px rgba(90,70,53,.18)}
+@media (min-width:900px){html.round #sheet{border-radius:24px}}
+html.round .card{border:0;border-radius:18px;box-shadow:0 3px 0 rgba(90,70,53,.1),0 6px 16px rgba(90,70,53,.08);background:var(--paper)}
+html.round .cat{border-radius:999px;border:0;background:var(--paper2)}
+html.round .kind-official{border-radius:999px}
+html.round .card .go{border-radius:999px}
+html.round .filters button{border:0;border-radius:999px;background:var(--paper2)}
+html.round .filters button.on{background:var(--accent);color:#fff}
+html.round .grid button,html.round .lm-list button{border:0;border-radius:14px;background:var(--paper2)}
+html.round .empty{border-radius:14px}
+html.round .rchip{border-radius:999px}
+html.round .zoom .btn{border-radius:50%}
+html.round .hint{border-radius:999px;background:var(--ink)}
+html.round .credit{border-radius:999px}
+html.round .credit .v{font-family:var(--f-round);font-size:10px}
+html.round .grab span{border-radius:999px}

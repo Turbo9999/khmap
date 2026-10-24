@@ -1,5 +1,6 @@
 // 方塊小人：有臉、會走路、會跳。點他會說出一條在地政見。
 import * as THREE from 'three';
+import { ROUND, sizedBox, cuteFace } from './style.js';
 
 const P = 0.034; // 小人單位
 const SKIN = ['#f1c9a5', '#e0ac85', '#c98e65', '#f6d7bd'];
@@ -25,15 +26,17 @@ function shade(hex, k) { const c = new THREE.Color(hex); c.offsetHSL(0, 0, k); r
 
 function makePerson(r) {
   const f = faceTexture(r);
+  if (ROUND) f.tex = cuteFace({ skin: f.skin, hair: f.hair, glasses: r() < .15, eye: r() < .3 ? '#2a5f9e' : '#2b1d14' });
   const skinM = new THREE.MeshLambertMaterial({ color: f.skin }), hairM = new THREE.MeshLambertMaterial({ color: f.hair });
-  const head = new THREE.Mesh(new THREE.BoxGeometry(P * 2, P * 2, P * 2), [skinM, skinM, hairM, skinM, new THREE.MeshLambertMaterial({ map: f.tex }), hairM]);
+  const HS = ROUND ? 2.5 : 2;
+  const head = new THREE.Mesh(sizedBox(P * HS, P * HS, P * HS, .42), [skinM, skinM, hairM, skinM, new THREE.MeshLambertMaterial({ map: f.tex }), hairM]);
   const shirt = new THREE.MeshLambertMaterial({ color: SHIRT[(r() * SHIRT.length) | 0] });
   const pants = new THREE.MeshLambertMaterial({ color: PANTS[(r() * PANTS.length) | 0] });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(P * 2, P * 3, P * 1), shirt);
-  const limb = (m, len) => { const piv = new THREE.Group(); const mesh = new THREE.Mesh(new THREE.BoxGeometry(P * .95, P * len, P * .95), m); mesh.position.y = -P * len / 2; piv.add(mesh); return piv; };
+  const body = new THREE.Mesh(sizedBox(P * 2, P * (ROUND ? 2.6 : 3), P * (ROUND ? 1.4 : 1)), shirt);
+  const limb = (m, len) => { const piv = new THREE.Group(); const mesh = new THREE.Mesh(sizedBox(P * .95, P * len, P * .95, .5), m); mesh.position.y = -P * len / 2; piv.add(mesh); return piv; };
   const armL = limb(shirt, 3), armR = limb(shirt, 3), legL = limb(pants, 3), legR = limb(pants, 3);
   const g = new THREE.Group();
-  body.position.y = P * 4.5; head.position.y = P * 7;
+  body.position.y = P * (ROUND ? 4.3 : 4.5); head.position.y = P * (ROUND ? 7.1 : 7);
   armL.position.set(-P * 1.5, P * 6, 0); armR.position.set(P * 1.5, P * 6, 0);
   legL.position.set(-P * .5, P * 3, 0); legR.position.set(P * .5, P * 3, 0);
   g.add(body, head, armL, armR, legL, legR);

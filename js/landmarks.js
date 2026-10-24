@@ -1,5 +1,6 @@
 // 各區地標（方塊模型）。位置為示意，會吸附到該區範圍內。
 import * as THREE from 'three';
+import { ROUND, unitBox, tone } from './style.js';
 
 const U = 0.065; // 地標方塊單位（km）
 
@@ -185,13 +186,13 @@ export function buildLandmarks(scene, world) {
   }
   // 靜態方塊合成一個 InstancedMesh
   const geo = new THREE.BoxGeometry(1, 1, 1);
-  const mesh = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color: 0xffffff }), boxes.length);
+  const mesh = new THREE.InstancedMesh(unitBox(.16), new THREE.MeshLambertMaterial({ color: 0xffffff }), boxes.length);
   const m4 = new THREE.Matrix4(), col = new THREE.Color();
   const owner = [];
   boxes.forEach((q, n) => {
     m4.makeScale(q.w * U, q.h * U, q.d * U);
     m4.setPosition(q.item.x + q.x * U, q.item.y + (q.y + q.h / 2) * U, q.item.z + q.z * U);
-    mesh.setMatrixAt(n, m4); mesh.setColorAt(n, col.set(q.c)); owner[n] = q.item;
+    mesh.setMatrixAt(n, m4); mesh.setColorAt(n, col.copy(tone(q.c, .14))); owner[n] = q.item;
   });
   mesh.castShadow = mesh.receiveShadow = true; scene.add(mesh);
   const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffff });

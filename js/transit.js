@@ -1,6 +1,7 @@
 // 軌道：環狀輕軌（地面）、捷運紅線北段（高架）、橘線大寮段（地面）。地下段不畫。
 // 路線座標為示意，依沿線主要道路與車站位置大略描出，非精確線形。
 import * as THREE from 'three';
+import { ROUND, unitBox } from './style.js';
 
 const LRT = { name: '環狀輕軌', color: 0x2fa84f, loop: true, kind: 'lrt', desc: '高雄環狀輕軌，繞行前鎮、苓雅、鹽埕、鼓山、三民一圈，全線在地面行駛。',
   pts: [
@@ -98,7 +99,7 @@ export function buildTransit(scene, world) {
       const g = new THREE.Group(); const parts = [];
       for (let c = 0; c < cars; c++) {
         const car = new THREE.Group();
-        const body = new THREE.Mesh(geo, mat(0xf4f5f2)); body.scale.set(.05, .04, carL); body.position.y = .028; body.castShadow = true;
+        const body = new THREE.Mesh(ROUND ? unitBox(.3) : geo, mat(0xf4f5f2)); body.scale.set(.05, .04, carL); body.position.y = .028; body.castShadow = true;
         const band = new THREE.Mesh(geo, mat(line.color)); band.scale.set(.052, .01, carL * .98); band.position.y = .018;
         const win = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0x263744 })); win.scale.set(.053, .013, carL * .9); win.position.y = .035; win.userData.win = true;
         car.add(body, band, win); g.add(car); parts.push(car);

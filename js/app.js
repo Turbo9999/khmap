@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { ROUND, STYLE, setStyle } from './style.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildWorld, V } from './world.js';
 import { buildLandmarks } from './landmarks.js';
@@ -21,7 +22,8 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, LOW ? 1.25 : 2));
 renderer.shadowMap.enabled = !LOW; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
-const DAY = { sky: 0xbfe3f2, fog: 0xcfe9f5, hemi: 1.05, sun: 1.7 }, NIGHT = { sky: 0x0b1626, fog: 0x0b1626, hemi: .28, sun: .25 };
+const DAY = ROUND ? { sky: 0xc9eefc, fog: 0xdff5fb, hemi: 1.25, sun: 1.45 } : { sky: 0xbfe3f2, fog: 0xcfe9f5, hemi: 1.05, sun: 1.7 },
+  NIGHT = ROUND ? { sky: 0x1b2347, fog: 0x1b2347, hemi: .4, sun: .3 } : { sky: 0x0b1626, fog: 0x0b1626, hemi: .28, sun: .25 };
 scene.background = new THREE.Color(DAY.sky);
 scene.fog = new THREE.Fog(DAY.fog, 160, 420);
 const camera = new THREE.PerspectiveCamera(36, 1, .01, 1200);
@@ -33,7 +35,7 @@ controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
 controls.panSpeed = 1.1;
 
-const hemi = new THREE.HemisphereLight(0xffffff, 0x6b7f6b, DAY.hemi); scene.add(hemi);
+const hemi = new THREE.HemisphereLight(0xffffff, ROUND ? 0xb9a98c : 0x6b7f6b, DAY.hemi); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff1dc, DAY.sun);
 sun.castShadow = !LOW; sun.shadow.mapSize.set(LOW ? 1024 : 2048, LOW ? 1024 : 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = .02;
 scene.add(sun, sun.target);
@@ -246,6 +248,8 @@ $('bAll').onclick = () => { clearSelect(); flyTo(center, fitDist()); };
 $('bCore').onclick = () => flyTo(new THREE.Vector3(-25.5, .3, 24), 12);
 $('bList').onclick = showList;
 $('bCity').onclick = showCity;
+$('bStyle').textContent = ROUND ? '方塊風' : '圓潤風';
+$('bStyle').onclick = () => setStyle(ROUND ? 'voxel' : 'round');
 $('bChars').onclick = showChars;
 let night = false;
 $('bNight').onclick = () => {
@@ -310,7 +314,7 @@ function tapAt(x, y) {
   const hl = ray.intersectObject(lm.mesh, false)[0];
   const ht = ray.intersectObject(world.mesh, false)[0];
   if (hl && (!ht || hl.distance <= ht.distance + .05)) { showLandmark(lm.owner[hl.instanceId]); return; }
-  if (ht) { const c = world.cells[ht.instanceId]; select(c.d, { move: false }); }
+  if (ht) { const d = world.districtAt(ht.point.x, ht.point.z); if (d >= 0) select(d, { move: false }); }
 }
 setTimeout(() => $('hint').style.opacity = 0, 7000);
 // 越近看越斜：遠時俯瞰，近到街道高度時幾乎平視
